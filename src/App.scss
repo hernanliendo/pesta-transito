@@ -1,0 +1,139 @@
+
+#ptoolbar-title {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.md-title {
+  font-size: 15px !important;
+  line-height: 20px !important;
+}
+
+.ptext-wrap {
+  white-space: pre-wrap; /* CSS3 */
+  white-space: -moz-pre-wrap; /* Firefox */
+  white-space: -pre-wrap; /* Opera <7 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* IE */
+}
+
+.md-snackbar {
+  bottom: 57px !important;
+}
+
+.text-height {
+  line-height: 22px !important;
+}
+
+.md-toolbar {
+  height: 35px !important;
+}
+
+.md-title--toolbar {
+  margin-top: -8px !important;
+}
+
+@keyframes removing-item {
+  100% {
+    opacity: 0;
+    margin-left: 10px;
+  }
+}
+
+@-webkit-keyframes scale {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+  45% {
+    -webkit-transform: scale(0.1);
+    transform: scale(0.1);
+    opacity: 0.7;
+  }
+  80% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scale {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+  45% {
+    -webkit-transform: scale(0.1);
+    transform: scale(0.1);
+    opacity: 0.7;
+  }
+  80% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes ball-pulse-sync {
+  33% {
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);
+  }
+  66% {
+    -webkit-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes ball-pulse-sync {
+  33% {
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);
+  }
+  66% {
+    -webkit-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.ball-pulse-sync > div:nth-child(0) {
+  -webkit-animation: ball-pulse-sync 0.6s -0.21s infinite ease-in-out;
+  animation: ball-pulse-sync 0.6s -0.21s infinite ease-in-out;
+}
+
+.ball-pulse-sync > div:nth-child(1) {
+  -webkit-animation: ball-pulse-sync 0.6s -0.14s infinite ease-in-out;
+  animation: ball-pulse-sync 0.6s -0.14s infinite ease-in-out;
+}
+
+.ball-pulse-sync > div:nth-child(2) {
+  -webkit-animation: ball-pulse-sync 0.6s -0.07s infinite ease-in-out;
+  animation: ball-pulse-sync 0.6s -0.07s infinite ease-in-out;
+}
+
+.ball-pulse-sync > div:nth-child(3) {
+  -webkit-animation: ball-pulse-sync 0.6s 0s infinite ease-in-out;
+  animation: ball-pulse-sync 0.6s 0s infinite ease-in-out;
+}
+
+.ball-pulse-sync > div {
+  background-color: #ffd20f;
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  margin: 2px;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  display: inline-block;
+}
