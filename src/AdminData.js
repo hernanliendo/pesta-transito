@@ -2,9 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import './App.css';
 import {Button} from "react-md";
+import zipcelx from "zipcelx";
 
 const createReactClass = require('create-react-class');
 const _ = require('lodash');
+const moment = require('moment');
 
 const AdminData = createReactClass({
 
@@ -18,6 +20,49 @@ const AdminData = createReactClass({
 
     onEdit(i) {
         this.props.onEditFamily(i);
+    },
+
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
+    },
+
+    onDownloadRequests() {
+        const toC = v => ({value: v || '', type: 'string'});
+
+        this.props.db.ref('events').once('value').then(snapshot => {
+            const data =
+                [[toC('Fecha'), toC('Tipo'), toC('Email'), toC('Nombre'), toC('Estado'), toC('Familia'), toC('Patente')]]
+                    .concat(_.toPairs(snapshot.val()).map(p => {
+
+                        return [
+                            toC(moment(p[1].ets).format('DD/MM/YYYY HH:mm:ss')),
+                            toC(p[1].t),
+                            toC(p[1].email),
+                            toC(p[1].displayName),
+                            toC(p[1].status),
+                            toC('12321'),
+                            toC('12321'),
+                            toC('12321'),
+                            toC('12321')
+                        ];
+                    }));
+
+            console.warn('data:');
+            console.warn(data);
+
+            zipcelx({
+                filename: this.formatDate(new Date()) + '-pedidos',
+                sheet: {data}
+            });
+        });
     },
 
     renderItem(i, idx) {
@@ -36,12 +81,18 @@ const AdminData = createReactClass({
         const m = this.props.model;
         const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 
-        return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '30px'}}>
+        return <div>
+            <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>
+                <Button icon onClick={this.onDownloadRequests}>cloud_download</Button>
+            </div>
 
-            {items.map(this.renderItem)}
+            <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '5px'}}>
 
-            <div style={{marginBottom: '50px'}}>&nbsp;</div>
+                {items.map(this.renderItem)}
 
+                <div style={{marginBottom: '50px'}}>&nbsp;</div>
+
+            </div>
         </div>;
     }
 });

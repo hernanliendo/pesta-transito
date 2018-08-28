@@ -7,12 +7,14 @@
     "create-react-class": "^15.6.3",
     "firebase": "^5.4.1",
     "lodash": "^4.17.10",
+    "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-md": "^1.5.0",
     "wait-promise": "^0.4.1",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "zipcelx": "^1.5.0"
   },
   "devDependencies": {
     "node-sass-chokidar": "^1.3.3",
