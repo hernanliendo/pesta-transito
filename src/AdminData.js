@@ -36,27 +36,45 @@ const AdminData = createReactClass({
 
     onDownloadRequests() {
         const toC = v => ({value: v || '', type: 'string'});
+        const usedKeys = ['car', 'displayName', 'n', 'status', 'emailVerified', 'email', 't', 'ets', 'rk', 'k', 'plate', 'state', 'uid', 'notes'];
 
         this.props.db.ref('events').once('value').then(snapshot => {
             const data =
-                [[toC('Fecha'), toC('Tipo'), toC('Email'), toC('Nombre'), toC('Estado'), toC('Familia'), toC('Patente')]]
-                    .concat(_.toPairs(snapshot.val()).map(p => {
+                [[
+                    toC('Fecha'), toC('Tipo'), toC('Email'), toC('Nombre'), toC('Estado'), toC('Familia'), toC('Patente'), toC('Notas'),
+                    toC('Conductor 1'), toC('Relación Conductor 1'), toC('Conductor 2'), toC('Relación Conductor 2'), toC('Chico/a 1'), toC('Grado Chico/a 1'),
+                    toC('Chico/a 2'), toC('Grado Chico/a 2'), toC('Chico/a 3'), toC('Grado Chico/a 3'), toC('Chico/a 4'), toC('Grado Chico/a 4')
+                ]]
+                    .concat(_.toPairs(snapshot.val())
+                        .filter(p => p[1].t !== 'newCar')
+                        .map(p => {
+                            const otherFields = _.toPairs(p[1]).filter(i => _.indexOf(usedKeys, i[0]) === -1).filter(i => !_.isEmpty(i));
+                            const drivers = otherFields.filter(i => _.indexOf(this.props.relations, i[1]) >= 0);
+                            const students = _.difference(otherFields, drivers);
 
-                        return [
-                            toC(moment(p[1].ets).format('DD/MM/YYYY HH:mm:ss')),
-                            toC(p[1].t),
-                            toC(p[1].email),
-                            toC(p[1].displayName),
-                            toC(p[1].status),
-                            toC('12321'),
-                            toC('12321'),
-                            toC('12321'),
-                            toC('12321')
-                        ];
-                    }));
-
-            console.warn('data:');
-            console.warn(data);
+                            return [
+                                toC(moment(p[1].ets).format('DD/MM/YYYY HH:mm:ss')),
+                                toC(p[1].t),
+                                toC(p[1].email),
+                                toC(p[1].displayName),
+                                toC(p[1].status),
+                                toC(p[1].n),
+                                toC(p[1].car),
+                                toC(p[1].notes),
+                                toC(_.get(drivers, '[0][0]', '')),
+                                toC(_.get(drivers, '[0][1]', '')),
+                                toC(_.get(drivers, '[1][0]', '')),
+                                toC(_.get(drivers, '[1][1]', '')),
+                                toC(_.get(students, '[0][0]', '')),
+                                toC(_.get(students, '[0][1]', '')),
+                                toC(_.get(students, '[1][0]', '')),
+                                toC(_.get(students, '[1][1]', '')),
+                                toC(_.get(students, '[2][0]', '')),
+                                toC(_.get(students, '[2][1]', '')),
+                                toC(_.get(students, '[3][0]', '')),
+                                toC(_.get(students, '[3][1]', ''))
+                            ]
+                        }));
 
             zipcelx({
                 filename: this.formatDate(new Date()) + '-pedidos',
@@ -99,6 +117,7 @@ const AdminData = createReactClass({
 
 AdminData.propTypes = {
     model: PropTypes.object.isRequired,
+    relations: PropTypes.array.isRequired,
     onEditFamily: PropTypes.func.isRequired,
     db: PropTypes.object.isRequired
 };

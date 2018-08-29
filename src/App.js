@@ -25,6 +25,8 @@ const FIREBASE_CONFIG = {
     messagingSenderId: '165908723273'
 };
 
+const relations = ['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o'];
+
 class App extends Component {
 
     constructor(props) {
@@ -237,8 +239,11 @@ class App extends Component {
     }
 
     renderPlatesSearch() {
-        if (this.state.addingNewCar) return <AddNewCar previousPlate={this.state.searchText} showMessage={m => this.showMessage(m)} model={this.model}
+        if (this.state.addingNewCar) return <AddNewCar previousPlate={this.state.searchText}
+                                                       showMessage={m => this.showMessage(m)}
+                                                       model={this.model}
                                                        editingFamily={this.state.editingFamily}
+                                                       relations={relations}
                                                        onConfirmed={newFamilyCar => this.newCarConfirmed(newFamilyCar)}
                                                        onCancel={() => this.setState({...this.state, addingNewCar: false, searchText: '', searchResult: []})}/>;
 
@@ -382,6 +387,7 @@ class App extends Component {
 
             {this.state.tabIndex === 2 && <AdminData
                 model={this.model}
+                relations={relations}
                 db={this.database}
                 onEditFamily={f => this.onEditFamily(f)}
             />}

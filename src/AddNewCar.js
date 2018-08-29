@@ -132,7 +132,7 @@ const AddNewCar = createReactClass({
             onChange={v => this.inputChanged(v, id)}
             value={this.state[id]}
             className="md-cell"
-            menuItems={['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o']}
+            menuItems={this.props.relations}
             simplifiedMenu={true}
         />;
     },
@@ -243,6 +243,7 @@ const AddNewCar = createReactClass({
 AddNewCar.propTypes = {
     previousPlate: PropTypes.string,
     onCancel: PropTypes.func.isRequired,
+    relations: PropTypes.array.isRequired,
     onConfirmed: PropTypes.func.isRequired,
     showMessage: PropTypes.func.isRequired,
     editingFamily: PropTypes.object,
