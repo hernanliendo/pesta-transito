@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.27';
+const VERSION = '0.28';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -281,6 +281,8 @@ class App extends Component {
                 }
 
                 {plates.map((p, ridx) => this.renderResults(p, ridx))}
+
+                <div style={{marginBottom: '50px'}}>&nbsp;</div>
 
             </div>
 

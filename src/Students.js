@@ -62,7 +62,7 @@ const Students = createReactClass({
         const onCharge = 'pending' === lastState ? 'Esperando' : _.split(this.props.users[lastUser].displayName, ' ')[0] + ' va llevando';
         let color;
 
-        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid)
+        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid && 'pending' !== lastState)
             color = '#FFEB3B';
         else if ('pending' !== lastState)
             color = 'rgba(0, 0, 0, 0.1)';
