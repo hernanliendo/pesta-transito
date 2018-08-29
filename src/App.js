@@ -15,7 +15,7 @@ const _ = require('lodash');
 const wait = require('wait-promise');
 
 const VERSION = '0.27';
-const DEV = true;
+const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
