@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.29';
+const VERSION = '0.31';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -420,17 +420,19 @@ class App extends Component {
                 <div style={{display: 'flex', flexDirection: 'column'}}>
                     <span className="md-caption">Vas a solicitar que traigan alumnos.</span>
 
-                    {_.toPairs(this.state.addingNotes.family.ks).map((p, idx) =>
-                        <SelectionControl
-                            key={idx}
-                            id={idx}
-                            name={idx}
-                            label={p[0] + ', ' + p[1]}
-                            type="checkbox"
-                            checked={!_.get(this.state, 'addingNotes.unrequested.' + idx)}
-                            onChange={() => this.changeRequestStudent(idx)}
-                        />
-                    )}
+                    <div style={{height: '120px', overflow: 'auto'}}>
+                        {_.toPairs(this.state.addingNotes.family.ks).map((p, idx) =>
+                            <SelectionControl
+                                key={idx}
+                                id={idx}
+                                name={idx}
+                                label={p[0] + ', ' + p[1]}
+                                type="checkbox"
+                                checked={!_.get(this.state, 'addingNotes.unrequested.' + idx)}
+                                onChange={() => this.changeRequestStudent(idx)}
+                            />
+                        )}
+                    </div>
 
                     <TextField
                         id="notes-text"
