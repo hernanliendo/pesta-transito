@@ -52,7 +52,7 @@ const Students = createReactClass({
         if (studentName.indexOf(familyName) === -1)
             studentName += ' ' + familyName;
 
-        return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + s[1].toUpperCase() + ')';
+        return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + s[1].toUpperCase().trim() + ')';
     },
 
     renderRequest(r, ridx) {
@@ -60,9 +60,20 @@ const Students = createReactClass({
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
         const onCharge = 'pending' === lastState ? 'Esperando' : _.split(this.props.users[lastUser].displayName, ' ')[0] + ' va llevando';
+        let color;
+
+        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid)
+            color = '#FFEB3B';
+        else if ('pending' !== lastState)
+            color = 'rgba(0, 0, 0, 0.1)';
+        else
+            color = null;
 
         return <div key={ridx}>
-            <div style={{display: 'flex', minHeight: '140px', alignItems: 'center', animation: ridx === animationOnItem ? 'removing-item 1s' : null}}>
+            <div style={{
+                display: 'flex', minHeight: '140px', alignItems: 'center', backgroundColor: color, justifyContent: 'center',
+                animation: ridx === animationOnItem ? 'removing-item 1s' : null
+            }}>
                 <div style={{marginRight: '10px'}}>
                     <Avatar icon={<FontIcon>face</FontIcon>}/>
                 </div>
@@ -110,7 +121,7 @@ const Students = createReactClass({
     },
 
     render() {
-        return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column'}}>
+        return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
@@ -139,6 +150,7 @@ const Students = createReactClass({
 Students.propTypes = {
     requests: PropTypes.array.isRequired,
     users: PropTypes.object.isRequired,
+    currentUser: PropTypes.object.isRequired,
     onDelivered: PropTypes.func.isRequired,
     onChangeStatus: PropTypes.func.isRequired
 };

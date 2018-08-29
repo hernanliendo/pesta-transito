@@ -99,7 +99,7 @@ const AdminData = createReactClass({
         const m = this.props.model;
         const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 
-        return <div>
+        return <div style={{marginLeft: '10px'}}>
             <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>
                 <Button icon onClick={this.onDownloadRequests}>cloud_download</Button>
             </div>

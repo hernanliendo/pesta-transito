@@ -164,7 +164,7 @@ class App extends Component {
 
         if (!family) return <div/>;
 
-        return <div key={ridx} style={{display: 'flex', marginBottom: '25px', minHeight: '100px', alignItems: 'center'}}>
+        return <div key={ridx} style={{display: 'flex', marginBottom: '25px', minHeight: '100px', alignItems: 'center', justifyContent: 'center'}}>
             <div style={{marginRight: '10px', minWidth: '40px'}}>
                 <Avatar icon={<FontIcon>directions_car</FontIcon>}/>
             </div>
@@ -250,7 +250,7 @@ class App extends Component {
         const plates = this.state.searchResult;
         const searchText = this.state.searchText;
 
-        return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{marginTop: '10px', display: 'flex', flexDirection: 'column'}}>
+        return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{marginTop: '4px', display: 'flex', flexDirection: 'column'}}>
 
             <div style={{display: 'flex', alignItems: 'flex-end', marginTop: '-9px'}}>
                 <TextField
@@ -369,8 +369,8 @@ class App extends Component {
                 fixed
                 // actions={<Button key="action" icon>more_vert</Button>}
                 title={<div>
-                    <span className="md-title md-title--toolbar">{this.state.user.displayName}</span>
-                    <span style={{fontSize: '10px', marginLeft: '5px'}} className="md-caption md-title--toolbar">{'(v' + VERSION + ')'}</span>
+                    <span style={{fontSize: '13px !important'}} className="md-title md-title--toolbar">{this.state.user.displayName}</span>
+                    <span style={{fontSize: '8px', marginLeft: '5px'}} className="md-caption md-title--toolbar">{'(v' + VERSION + ')'}</span>
                 </div>}
             />
 
@@ -381,6 +381,7 @@ class App extends Component {
             {this.state.tabIndex === 1 && <Students
                 requests={this.state.requests}
                 users={this.state.users}
+                currentUser={this.state.user}
                 onDelivered={rk => this.onDelivered(rk)}
                 onChangeStatus={(rk, status) => this.changeStatus(rk, status)}
             />}
