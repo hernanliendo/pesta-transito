@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.33';
+const VERSION = '0.34';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -166,7 +166,8 @@ class App extends Component {
 
         if (!family) return <div/>;
 
-        return <div key={ridx} style={{display: 'flex', marginBottom: '25px', minHeight: '100px', alignItems: 'center', justifyContent: 'center'}}>
+        return <div onClick={() => this.setState({...this.state, addingNotes: {plate, family}, searchText: '', searchResult: []})}
+                    key={ridx} style={{display: 'flex', marginBottom: '25px', minHeight: '100px', alignItems: 'center', justifyContent: 'center'}}>
             <div style={{marginRight: '10px', minWidth: '40px'}}>
                 <Avatar icon={<FontIcon>directions_car</FontIcon>}/>
             </div>
