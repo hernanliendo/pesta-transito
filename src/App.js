@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Avatar, BottomNavigation, Button, Card, DialogContainer, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
+import {Avatar, BottomNavigation, Button, Card, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
 import Students from "./Students";
 import AdminData from "./AdminData";
 import AddNewCar from "./AddNewCar";
@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.31';
+const VERSION = '0.32';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -382,7 +382,7 @@ class App extends Component {
 
             <div style={{marginBottom: '5px'}}>&nbsp;</div>
 
-            {this.state.tabIndex === 0 && this.renderPlatesSearch()}
+            {(!this.state.addingNotes && this.state.tabIndex === 0) && this.renderPlatesSearch()}
 
             {this.state.tabIndex === 1 && <Students
                 requests={this.state.requests}
@@ -400,55 +400,41 @@ class App extends Component {
             />}
 
             {this.state.addingNotes &&
-            <DialogContainer
-                id="add-notes"
-                visible
-                modal
-                dialogClassName="add-notes"
-                onHide={() => this.hideNotes()}
-                actions={[{
-                    onClick: () => this.confirmNotes(),
-                    primary: true,
-                    children: '¡Confirmo!',
-                }, {
-                    onClick: () => this.hideNotes(),
-                    primary: false,
-                    children: 'Cancelo',
-                }]}
-                title="Revisá los datos"
-            >
-                <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <span className="md-caption">Vas a solicitar que traigan alumnos.</span>
+            <div style={{display: 'flex', flexDirection: 'column', margin: '25px'}}>
+                <span className="md-caption">Vas a solicitar que traigan alumnos.</span>
 
-                    <div style={{height: '120px', overflow: 'auto'}}>
-                        {_.toPairs(this.state.addingNotes.family.ks).map((p, idx) =>
-                            <SelectionControl
-                                key={idx}
-                                id={idx}
-                                name={idx}
-                                label={p[0] + ', ' + p[1]}
-                                type="checkbox"
-                                checked={!_.get(this.state, 'addingNotes.unrequested.' + idx)}
-                                onChange={() => this.changeRequestStudent(idx)}
-                            />
-                        )}
-                    </div>
-
-                    <TextField
-                        id="notes-text"
-                        label="Notas o aclaraciones"
-                        ref={notesText => this.notesText = notesText}
-                        fullWidth
-                        lineDirection="center"
-                    />
-
+                <div style={{height: '150px', overflow: 'auto'}}>
+                    {_.toPairs(this.state.addingNotes.family.ks).map((p, idx) =>
+                        <SelectionControl
+                            key={idx}
+                            id={idx}
+                            name={idx}
+                            label={p[0] + ', ' + p[1]}
+                            type="checkbox"
+                            checked={!_.get(this.state, 'addingNotes.unrequested.' + idx)}
+                            onChange={() => this.changeRequestStudent(idx)}
+                        />
+                    )}
                 </div>
-            </DialogContainer>
+
+                <TextField
+                    id="notes-text"
+                    label="Notas o aclaraciones"
+                    ref={notesText => this.notesText = notesText}
+                    fullWidth
+                    lineDirection="center"
+                />
+
+                <div style={{display: 'flex', justifyContent: 'space-around', marginTop: '30px'}}>
+                    <Button raised primary onClick={() => this.confirmNotes()}>¡Confirmo!</Button>
+                    <Button raised secondary onClick={() => this.hideNotes()}>Cancelo</Button>
+                </div>
+            </div>
             }
 
             <Snackbar id="notifications-bar" toasts={this.state.toasts} autohideTimeout={4000} onDismiss={() => this.setState({...this.state, toasts: _.tail(this.state.toasts)})}/>
 
-            {!this.state.searchFocus &&
+            {(!this.state.searchFocus && !this.state.addingNotes) &&
             <BottomNavigation
                 links={[
                     {label: 'AUTOS', icon: <FontIcon>directions_car</FontIcon>},
