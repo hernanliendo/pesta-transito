@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.34';
+const VERSION = '0.36';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -36,8 +36,6 @@ class App extends Component {
 
         this.state = {
             requests: [],
-
-            searchFocus: false,
 
             connected: false,
             initializing: true,
@@ -263,8 +261,6 @@ class App extends Component {
                     fullWidth
                     leftIcon={<FontIcon>directions_car</FontIcon>}
                     onChange={v => this.textChanged(v)}
-                    onFocus={() => this.setState({...this.state, searchFocus: true})}
-                    onBlur={() => this.setState({...this.state, searchFocus: false})}
                     value={this.state.searchText}
                     lineDirection="center"
                     className="md-cell md-cell--bottom"
@@ -291,7 +287,7 @@ class App extends Component {
 
             </div>
 
-            {(!this.state.searchFocus && plates.length === 0 && this.state.searchText.length === 0 && !this.state.addingNotes) &&
+            {(plates.length === 0 && this.state.searchText.length === 0 && !this.state.addingNotes) &&
             <div className="md-caption" style={{position: 'absolute', bottom: '60px'}}>
 
                 <div style={{display: 'flex', marginBottom: '20px', justifyContent: 'center'}}>
@@ -439,7 +435,7 @@ class App extends Component {
 
             <Snackbar id="notifications-bar" toasts={this.state.toasts} autohideTimeout={4000} onDismiss={() => this.setState({...this.state, toasts: _.tail(this.state.toasts)})}/>
 
-            {(!this.state.searchFocus && !this.state.addingNotes) &&
+            {(!this.state.addingNotes) &&
             <BottomNavigation
                 links={[
                     {label: 'AUTOS', icon: <FontIcon>directions_car</FontIcon>},
