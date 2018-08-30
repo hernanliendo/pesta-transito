@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.32';
+const VERSION = '0.33';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -292,7 +292,13 @@ class App extends Component {
 
             {(!this.state.searchFocus && plates.length === 0 && this.state.searchText.length === 0 && !this.state.addingNotes) &&
             <div className="md-caption" style={{position: 'absolute', bottom: '60px'}}>
-                Aquí podés ingresar la patente de un auto que está esperando por sus hijos. Cuando lo confirmes un aviso se enviará al Colegio
+
+                <div style={{display: 'flex', marginBottom: '20px', justifyContent: 'center'}}>
+                    <img style={{width: '140px', height: '45px', marginTop: '30px'}} src={Logo} alt="Colegio Pestalozzi"/>
+                </div>
+                <div>
+                    Aquí podés ingresar la patente de un auto que está esperando por sus hijos. Cuando lo confirmes un aviso se enviará al Colegio
+                </div>
             </div>
             }
         </div>;
@@ -403,19 +409,17 @@ class App extends Component {
             <div style={{display: 'flex', flexDirection: 'column', margin: '25px'}}>
                 <span className="md-caption">Vas a solicitar que traigan alumnos.</span>
 
-                <div style={{height: '150px', overflow: 'auto'}}>
-                    {_.toPairs(this.state.addingNotes.family.ks).map((p, idx) =>
-                        <SelectionControl
-                            key={idx}
-                            id={idx}
-                            name={idx}
-                            label={p[0] + ', ' + p[1]}
-                            type="checkbox"
-                            checked={!_.get(this.state, 'addingNotes.unrequested.' + idx)}
-                            onChange={() => this.changeRequestStudent(idx)}
-                        />
-                    )}
-                </div>
+                {_.toPairs(this.state.addingNotes.family.ks).map((p, idx) =>
+                    <SelectionControl
+                        key={idx}
+                        id={idx}
+                        name={idx}
+                        label={p[0] + ', ' + p[1]}
+                        type="checkbox"
+                        checked={!_.get(this.state, 'addingNotes.unrequested.' + idx)}
+                        onChange={() => this.changeRequestStudent(idx)}
+                    />
+                )}
 
                 <TextField
                     id="notes-text"
@@ -426,8 +430,8 @@ class App extends Component {
                 />
 
                 <div style={{display: 'flex', justifyContent: 'space-around', marginTop: '30px'}}>
-                    <Button raised primary onClick={() => this.confirmNotes()}>¡Confirmo!</Button>
-                    <Button raised secondary onClick={() => this.hideNotes()}>Cancelo</Button>
+                    <Button raised primary style={{minWidth: '110px'}} onClick={() => this.confirmNotes()}>Confirmo</Button>
+                    <Button raised secondary style={{minWidth: '110px'}} onClick={() => this.hideNotes()}>Cancelo</Button>
                 </div>
             </div>
             }
