@@ -76,6 +76,7 @@ const Students = createReactClass({
             }}>
                 <div style={{marginRight: '10px'}}>
                     <Avatar icon={<FontIcon>face</FontIcon>}/>
+                    <Avatar style={{height: '25px', width: '25px', marginLeft: '-8px'}} contentStyle={{fontSize: '15px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
                 </div>
 
                 <div style={{display: 'flex', flexDirection: 'column', marginRight: '10px', width: 'calc(100vw - 225px)'}}>

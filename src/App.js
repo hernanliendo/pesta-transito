@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.36';
+const VERSION = '0.37';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -62,6 +62,8 @@ class App extends Component {
 
     saveEvent(evt) {
         if (!this.user) return;
+
+        console.warn('evt', evt);
 
         this.database.ref('events').push().set(Object.assign({
             ets: firebase.database.ServerValue.TIMESTAMP,
@@ -121,6 +123,16 @@ class App extends Component {
                 if (ts) clearTimeout(ts);
             }, 200);
 
+            if (items) {
+                let newOrd = 0;
+
+                _.toPairs(items).forEach(pp => newOrd = pp[1].ord && pp[1].ord > newOrd ? pp[1].ord : newOrd);
+                newOrd++;
+
+                _.toPairs(items)
+                    .filter(pp => pp[1].uid === this.user.uid && !pp[1].ord)
+                    .forEach(pp => this.database.ref(`requests/${pp[0]}/ord`).set(newOrd));
+            }
             this.forceUpdate();
         });
 
