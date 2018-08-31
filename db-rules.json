@@ -1,0 +1,33 @@
+// https://firebase.google.com/docs/database/security/securing-data
+{
+  "rules": {
+
+    "2018": {
+      ".read": true,
+      ".write": true
+    },
+
+    "admins": {
+      ".read": true,
+      ".write": true
+    },
+
+    "requests": {
+      ".read": true,
+      ".write": true
+    },
+
+    "events": {
+      "$event_id": {
+
+      },
+      ".read": true,
+      ".write": true
+    },
+
+    "users": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
