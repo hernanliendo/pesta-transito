@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.40';
+const VERSION = '0.41';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -36,8 +36,9 @@ class App extends Component {
 
         this.state = {
             requests: [],
+            noAccess: false,
 
-            connected: false,
+            connected: true,
             initializing: true,
             user: {},
             isAdmin: false,
@@ -108,7 +109,7 @@ class App extends Component {
         this.database.ref('2018').on('value', snapshot => {
             this.model = snapshot.val();
             this.forceUpdate();
-        });
+        }, () => this.setState({...this.state, noAccess: true}));
 
         this.database.ref('requests').on('value', snapshot => {
             const items = snapshot.val();
@@ -371,18 +372,18 @@ class App extends Component {
             </div>
         </Card>;
 
-        if (!this.model) return this.loader();
+        if (!this.model && !this.state.noAccess) return this.loader();
+
+        if (this.state.noAccess) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
+            <FontIcon style={{fontSize: '170px'}}>pan_tool</FontIcon>
+
+            <span className="md-caption md-text-center" style={{fontSize: '26px', margin: '20px'}}>¡Casi listo!</span>
+            <span className="md-caption md-text-center" style={{fontSize: '26px', margin: '20px'}}>Solo falta que solicites acceso a otro voluntario</span>
+        </div>;
 
         if (!this.state.connected) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
             <FontIcon style={{fontSize: '170px'}}>signal_wifi_off</FontIcon>
             <span className="md-caption md-text-center" style={{fontSize: '28px'}}>En este momento no tenés conexión a internet</span>
-        </div>;
-
-        const currentUser = _.get(this, `state.users.${_.get(this, 'user.uid', '')}`);
-
-        if (currentUser && !currentUser.valid) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
-            <FontIcon style={{fontSize: '170px'}}>pan_tool</FontIcon>
-            <span className="md-caption md-text-center" style={{fontSize: '28px'}}>Casi listo! Solo falta que solicites acceso a otro padre</span>
         </div>;
 
         return <div>
