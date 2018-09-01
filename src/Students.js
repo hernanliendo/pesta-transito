@@ -130,13 +130,6 @@ const Students = createReactClass({
 
                 <div style={{marginBottom: '30px'}}>&nbsp;</div>
             </div>
-
-            {this.state.previousRequests.length === 0 &&
-            <div className="md-caption" style={{position: 'absolute', bottom: '60px'}}>
-                Aquí vas a ver alumnos, que los papás en la calle están esperando, según el orden de llegada
-            </div>
-            }
-
         </div>;
     }
 });
