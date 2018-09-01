@@ -11,25 +11,32 @@
 {
   "rules": {
     "2018": {
-      ".read": "auth !== null && root.child('users/' + auth.uid).exists()",
-      ".write": "auth !== null && root.child('users/' + auth.uid).exists()"
+      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
+      ".write": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
     },
     "admins": {
-      ".read": "auth !== null && root.child('users/' + auth.uid).exists()"
+      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
     },
     "requests": {
-      ".read": "auth !== null && root.child('users/' + auth.uid).exists()",
-      ".write": "auth !== null && root.child('users/' + auth.uid).exists()"
+      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
+      ".write": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
     },
     "events": {
       ".read": "auth !== null && root.child('admins/' + auth.uid).exists()",
-      ".write": "auth !== null && root.child('users/' + auth.uid).exists()"
+      ".write": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
     },
     "users": {
       "$user_id": {
-        ".write": "auth !== null && auth.uid === $user_id"
+        "valid": {
+          ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
+          ".write": "auth !== null && root.child('admins/' + auth.uid).exists()"
+        },
+        "displayName": {
+          ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
+          ".write": "auth !== null && auth.uid === $user_id"
+        }
       },
-      ".read": "auth !== null && root.child('users/' + auth.uid).exists()"
+      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
     }
   }
 }
