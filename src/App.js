@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.39';
+const VERSION = '0.40';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -378,6 +378,13 @@ class App extends Component {
             <span className="md-caption md-text-center" style={{fontSize: '28px'}}>En este momento no tenés conexión a internet</span>
         </div>;
 
+        const currentUser = _.get(this, `state.users.${_.get(this, 'user.uid', '')}`);
+
+        if (currentUser && !currentUser.valid) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
+            <FontIcon style={{fontSize: '170px'}}>pan_tool</FontIcon>
+            <span className="md-caption md-text-center" style={{fontSize: '28px'}}>Casi listo! Solo falta que solicites acceso a otro padre</span>
+        </div>;
+
         return <div>
             <Toolbar
                 id="ptoolbar"
@@ -405,6 +412,7 @@ class App extends Component {
             {this.state.tabIndex === 2 && <AdminData
                 model={this.model}
                 relations={relations}
+                users={this.state.users}
                 db={this.database}
                 onEditFamily={f => this.onEditFamily(f)}
             />}
@@ -447,7 +455,7 @@ class App extends Component {
                 links={[
                     {label: 'AUTOS', icon: <FontIcon>directions_car</FontIcon>},
                     {label: 'ALUMNOS', icon: <FontIcon>face</FontIcon>}
-                ].concat(this.state.isAdmin ? [{label: 'DATOS', icon: <FontIcon>edit</FontIcon>}] : [])}
+                ].concat(this.state.isAdmin ? [{label: 'DATOS', icon: <FontIcon>folder_shared</FontIcon>}] : [])}
                 dynamic={false}
                 colored
                 onNavChange={activeIndex => this.setState({...this.state, tabIndex: activeIndex})}
