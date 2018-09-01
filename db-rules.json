@@ -1,4 +1,13 @@
 // https://firebase.google.com/docs/database/security/securing-data
+/*
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+*/
+
 {
   "rules": {
     "2018": {
