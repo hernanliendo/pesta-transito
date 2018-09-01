@@ -95,9 +95,25 @@ const AdminData = createReactClass({
         </div>;
     },
 
+    approve(id) {
+        this.props.db.ref(`users/${id}/valid`).set(1);
+    },
+
+    renderPending(i, idx) {
+        return <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
+
+            <div style={{display: 'flex', alignItems: 'center'}} className="md-text ptext-wrap md-font-semibold">{i[1].displayName}</div>
+
+            <div style={{display: 'flex', alignItems: 'flex-end'}}>
+                <Button icon onClick={() => this.approve(i[0])}>thumb_up</Button>
+            </div>
+        </div>;
+    },
+
     render() {
         const m = this.props.model;
-        const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
+        const pendingUsers = _.toPairs(this.props.users).filter(p => !p[1].valid);
+        const items = pendingUsers.length > 0 ? [] : _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 
         return <div style={{marginLeft: '10px'}}>
             <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>
@@ -105,6 +121,8 @@ const AdminData = createReactClass({
             </div>
 
             <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '5px'}}>
+
+                {pendingUsers.map(this.renderPending)}
 
                 {items.map(this.renderItem)}
 
@@ -117,6 +135,7 @@ const AdminData = createReactClass({
 
 AdminData.propTypes = {
     model: PropTypes.object.isRequired,
+    users: PropTypes.object.isRequired,
     relations: PropTypes.array.isRequired,
     onEditFamily: PropTypes.func.isRequired,
     db: PropTypes.object.isRequired
