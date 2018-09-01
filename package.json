@@ -5,13 +5,13 @@
   "private": true,
   "dependencies": {
     "create-react-class": "^15.6.3",
-    "firebase": "^5.4.1",
+    "firebase": "^5.4.2",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-md": "^1.5.0",
+    "react-md": "^1.5.1",
     "wait-promise": "^0.4.1",
     "webfontloader": "^1.6.28",
     "zipcelx": "^1.5.0"

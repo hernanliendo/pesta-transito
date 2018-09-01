@@ -15,7 +15,7 @@ const _ = require('lodash');
 const wait = require('wait-promise');
 
 const VERSION = '0.38';
-const DEV = true;
+const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -62,8 +62,6 @@ class App extends Component {
 
     saveEvent(evt) {
         if (!this.user) return;
-
-        console.warn('evt', evt);
 
         this.database.ref('events').push().set(Object.assign({
             ets: firebase.database.ServerValue.TIMESTAMP,

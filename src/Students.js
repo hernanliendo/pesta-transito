@@ -76,7 +76,7 @@ const Students = createReactClass({
             }}>
                 <div style={{marginRight: '10px'}}>
                     <Avatar icon={<FontIcon>face</FontIcon>}/>
-                    <Avatar style={{height: '25px', width: '25px', marginLeft: '-8px'}} contentStyle={{fontSize: '15px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
+                    <Avatar style={{height: '27px', width: '27px', marginLeft: '-10px'}} contentStyle={{fontSize: '17px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
                 </div>
 
                 <div style={{display: 'flex', flexDirection: 'column', marginRight: '10px', width: 'calc(100vw - 225px)'}}>
@@ -95,13 +95,6 @@ const Students = createReactClass({
 
                 <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
 
-                    {'incar' === lastState &&
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>LISTO</Button>
-                        <Button raised secondary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>CANCELO</Button>
-                    </div>
-                    }
-
                     {'pending' === lastState &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>AHí VAMOS</Button>
@@ -110,7 +103,7 @@ const Students = createReactClass({
 
                     {'transit' === lastState &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'incar')}>ENTREGADO</Button>
+                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>
                         <Button raised onClick={() => this.props.onChangeStatus(r.k, 'pending')}>CANCELO</Button>
                     </div>
                     }
