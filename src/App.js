@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.42';
+const VERSION = '0.43';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -303,6 +303,9 @@ class App extends Component {
                 </div>
                 <div>
                     Aquí podés ingresar la patente de un auto que está esperando por sus hijos. Cuando lo confirmes un aviso se enviará al Colegio
+                </div>
+                <div style={{display: 'flex', marginTop: '5px', justifyContent: 'center'}}>
+                    ¿Feedback? Escribinos&nbsp;<a href="mailto:hernan.liendo@gmail.com?Subject=Pesta Transito" target="_top">aquí</a>
                 </div>
             </div>
             }
