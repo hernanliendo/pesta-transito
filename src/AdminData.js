@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import './App.css';
-import {Button} from "react-md";
+import {Button, Divider} from "react-md";
 import zipcelx from "zipcelx";
 
 const createReactClass = require('create-react-class');
@@ -113,7 +113,7 @@ const AdminData = createReactClass({
     render() {
         const m = this.props.model;
         const pendingUsers = _.toPairs(this.props.users).filter(p => !p[1].valid);
-        const items = pendingUsers.length > 0 ? [] : _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
+        const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 
         return <div style={{marginLeft: '10px'}}>
             <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>
@@ -125,6 +125,8 @@ const AdminData = createReactClass({
                 {pendingUsers.map(this.renderPending)}
 
                 {items.map(this.renderItem)}
+
+                {pendingUsers.length > 0 && <Divider/>}
 
                 <div style={{marginBottom: '50px'}}>&nbsp;</div>
 
