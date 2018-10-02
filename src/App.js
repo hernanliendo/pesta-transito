@@ -14,7 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.44';
+const VERSION = '0.45';
 const DEV = false;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
@@ -115,17 +115,18 @@ class App extends Component {
             const items = snapshot.val();
 
             const ts = setTimeout(() => {
-                this.setState({...this.state, requests: !items ? [] : _.toPairs(items).map(i => ({...i[1], k: i[0]}))});
+                this.setState({...this.state, requests: !items ? [] : _.toPairs(items).filter(p => p[1].family).map(i => ({...i[1], k: i[0]}))});
                 if (ts) clearTimeout(ts);
             }, 200);
 
             if (items) {
                 let newOrd = 0;
 
-                _.toPairs(items).forEach(pp => newOrd = pp[1].ord && pp[1].ord > newOrd ? pp[1].ord : newOrd);
+                _.toPairs(items).filter(p => p[1].family).forEach(pp => newOrd = pp[1].ord && pp[1].ord > newOrd ? pp[1].ord : newOrd);
                 newOrd++;
 
                 _.toPairs(items)
+                    .filter(p => p[1].family)
                     .filter(pp => pp[1].uid === this.user.uid && !pp[1].ord)
                     .forEach(pp => this.database.ref(`requests/${pp[0]}/ord`).set(newOrd));
             }
