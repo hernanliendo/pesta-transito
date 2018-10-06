@@ -14,8 +14,7 @@ require('firebase/auth');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.45';
-const DEV = false;
+const VERSION = '0.46';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -27,6 +26,7 @@ const FIREBASE_CONFIG = {
 
 const relations = ['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o'];
 
+// vista maestra, whatsappcall
 class App extends Component {
 
     constructor(props) {
@@ -76,21 +76,27 @@ class App extends Component {
         this.setState({...this.state, editingFamily: f, tabIndex: 0, addingNewCar: true});
     }
 
+    log(obj) {
+        if (!obj) return;
+
+        this.database.ref('logs').push().set({
+            v: JSON.stringify(obj),
+            ts: firebase.database.ServerValue.TIMESTAMP,
+            displayName: (this.user && this.user.displayName) ? this.user.displayName : 'no name',
+        });
+    }
+
     componentWillMount() {
         firebase.initializeApp(FIREBASE_CONFIG);
 
         firebase.auth().languageCode = 'es';
         this.database = firebase.database();
 
-        if (DEV) {
-            const u = {uid: 'SJDQJKXhHZd5ir7YdJNbljbStJg1', displayName: 'Hernan', email: 'hernan@test.com'};
-            this.user = u;
-            this.listenModel();
-            this.setState({...this.state, initializing: false, user: u});
-            return;
-        }
+        this.log('after f.db');
 
         firebase.auth().onAuthStateChanged(user => {
+            this.log('onAuthStateChanged: ' + user);
+
             if (!user)
                 this.setState({...this.state, initializing: false});
             else {
@@ -101,6 +107,8 @@ class App extends Component {
                 this.listenModel();
 
                 this.setState({...this.state, initializing: false, user: {displayName: user.displayName, uid: user.uid, email: user.email}});
+
+                this.log('onAuthStateChanged done: ' + user);
             }
         });
     }
@@ -109,35 +117,24 @@ class App extends Component {
         this.database.ref('2018').on('value', snapshot => {
             this.model = snapshot.val();
             this.forceUpdate();
+            this.log('got model');
         }, () => this.setState({...this.state, noAccess: true}));
 
         this.database.ref('requests').on('value', snapshot => {
             const items = snapshot.val();
 
-            const ts = setTimeout(() => {
-                this.setState({...this.state, requests: !items ? [] : _.toPairs(items).filter(p => p[1].family).map(i => ({...i[1], k: i[0]}))});
-                if (ts) clearTimeout(ts);
-            }, 200);
-
-            if (items) {
-                let newOrd = 0;
-
-                _.toPairs(items).filter(p => p[1].family).forEach(pp => newOrd = pp[1].ord && pp[1].ord > newOrd ? pp[1].ord : newOrd);
-                newOrd++;
-
-                _.toPairs(items)
-                    .filter(p => p[1].family)
-                    .filter(pp => pp[1].uid === this.user.uid && !pp[1].ord)
-                    .forEach(pp => this.database.ref(`requests/${pp[0]}/ord`).set(newOrd));
-            }
-            this.forceUpdate();
+            this.setState({...this.state, requests: !items ? [] : _.toPairs(items).filter(p => p[1].family).map(i => ({...i[1], k: i[0]}))});
         });
 
         this.database.ref('users').on('value', snapshot => this.setState({...this.state, users: snapshot.val()}));
 
         this.database.ref('admins').on('value', snapshot => this.setState({...this.state, isAdmin: snapshot.val()[this.user.uid]}));
 
-        this.database.ref('.info/connected').on('value', snap => this.setState({...this.state, connected: snap.val()}));
+        this.database.ref('.info/connected').on('value', snap => {
+            const conn = snap.val();
+            this.setState({...this.state, connected: conn});
+            this.log('got connected: ' + conn);
+        });
     }
 
     onDelivered(rk) {
@@ -162,7 +159,7 @@ class App extends Component {
     async clearText() {
         this.setState({...this.state, searchText: '', searchResult: []});
 
-        await wait.sleep(300);
+        await wait.sleep(400);
 
         if (this.plateSearchRef)
             this.plateSearchRef.focus();
@@ -215,7 +212,20 @@ class App extends Component {
         }
 
         if (this.state.requests.filter(ri => ri.plate === r.plate).length === 0) {
-            this.database.ref('requests').push().set(r, () => this.showMessage('Se ha notificado al Colegio'));
+            const newRequestRef = this.database.ref('requests').push();
+
+            newRequestRef.set(r, () => {
+                this.showMessage('Se ha notificado al Colegio');
+
+                let order = 0;
+
+                (this.state.requests || []).filter(rr => rr.ord).forEach(rr => order = rr.ord);
+
+                order++;
+
+                this.database.ref('requests/' + newRequestRef.key + '/ord').set(order);
+            });
+
             this.saveEvent({t: 'request', request: r});
         }
         this.hideNotes();
@@ -325,7 +335,7 @@ class App extends Component {
         });
     }
 
-    loader() {
+    static loader() {
         return <div style={{
             margin: 0,
             position: 'absolute',
@@ -344,10 +354,8 @@ class App extends Component {
         </div>;
     }
 
-    render() {
-        if (this.state.initializing) return this.loader();
-
-        if (!this.user) return <Card style={{width: '70%', marginTop: '20px', padding: '20px'}} className="md-block-centered">
+    signInScreen() {
+        return <Card style={{width: '70%', marginTop: '20px', padding: '20px'}} className="md-block-centered">
             <div className="firebaseui-container firebaseui-page-provider-sign-in firebaseui-id-page-provider-sign-in firebaseui-use-spinner">
                 <ul className="firebaseui-idp-list">
                     <li className="firebaseui-list-item">
@@ -375,8 +383,15 @@ class App extends Component {
                 <img style={{width: '280px', height: '91px', marginTop: '30px'}} src={Logo} alt="Colegio Pestalozzi"/>
             </div>
         </Card>;
+    }
 
-        if (!this.model && !this.state.noAccess) return this.loader();
+    render() {
+        if (this.state.initializing) return App.loader();
+
+        if (!this.user) return this.signInScreen();
+
+        if (!this.model && !this.state.noAccess) return App.loader();
+
 
         if (this.state.noAccess) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
             <FontIcon style={{fontSize: '170px'}}>pan_tool</FontIcon>
@@ -385,10 +400,12 @@ class App extends Component {
             <span className="md-caption md-text-center" style={{fontSize: '26px', margin: '20px'}}>Solo falta que solicites acceso a otro voluntario</span>
         </div>;
 
+
         if (!this.state.connected) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
             <FontIcon style={{fontSize: '170px'}}>signal_wifi_off</FontIcon>
             <span className="md-caption md-text-center" style={{fontSize: '28px'}}>En este momento no tenés conexión a internet</span>
         </div>;
+
 
         return <div>
             <Toolbar

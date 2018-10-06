@@ -10,6 +10,10 @@
 
 {
   "rules": {
+    "logs": {
+      ".read": false,
+      ".write": true
+    },
     "2018": {
       ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
       ".write": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
