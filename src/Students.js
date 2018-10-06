@@ -68,6 +68,7 @@ const Students = createReactClass({
         else
             color = null;
 
+
         return <div key={ridx}>
             <div style={{
                 display: 'flex', minHeight: '140px', alignItems: 'center', backgroundColor: color, justifyContent: 'center',
@@ -94,7 +95,13 @@ const Students = createReactClass({
 
                 <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
 
-                    {'pending' === lastState &&
+                    {(this.props.isTeacher && 'pending' === lastState) &&
+                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>AHí VAMOS11</Button>
+                    </div>
+                    }
+
+                    {(!this.props.isTeacher && 'pending' === lastState) &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>AHí VAMOS</Button>
                     </div>
@@ -137,6 +144,7 @@ Students.propTypes = {
     requests: PropTypes.array.isRequired,
     users: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
+    isTeacher: PropTypes.bool,
     onDelivered: PropTypes.func.isRequired,
     onChangeStatus: PropTypes.func.isRequired
 };

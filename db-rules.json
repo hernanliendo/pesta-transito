@@ -21,6 +21,9 @@
     "admins": {
       ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
     },
+    "teachers": {
+      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
+    },
     "requests": {
       ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
       ".write": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
