@@ -26,7 +26,6 @@ const FIREBASE_CONFIG = {
 
 const relations = ['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o'];
 
-// vista maestra, whatsappcall
 class App extends Component {
 
     constructor(props) {
@@ -95,7 +94,7 @@ class App extends Component {
         this.log('after f.db');
 
         firebase.auth().onAuthStateChanged(user => {
-            this.log('onAuthStateChanged: ' + user);
+            this.log('onAuthStateChanged: ' + (user ? user.uid : 'noid'));
 
             if (!user)
                 this.setState({...this.state, initializing: false});
@@ -108,7 +107,7 @@ class App extends Component {
 
                 this.setState({...this.state, initializing: false, user: {displayName: user.displayName, uid: user.uid, email: user.email}});
 
-                this.log('onAuthStateChanged done: ' + user);
+                this.log('onAuthStateChanged done: ' + (user ? user.uid : 'noid'));
             }
         });
     }
