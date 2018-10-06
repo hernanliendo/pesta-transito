@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Avatar, Button, Divider, FontIcon} from 'react-md';
-import './App.css';
 
 const createReactClass = require('create-react-class');
 const _ = require('lodash');

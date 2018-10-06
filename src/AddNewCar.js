@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Button, SelectField, TextField} from 'react-md';
-import './App.css';
 
 const createReactClass = require('create-react-class');
 const wait = require('wait-promise');
@@ -23,7 +22,11 @@ const FIELDS = [
     'student2',
     'grade2',
     'student3',
-    'grade3'
+    'grade3',
+
+    'wsapp0',
+    'wsapp1',
+    'wsapp2'
 ];
 
 const TEXTS = {
@@ -43,6 +46,10 @@ const TEXTS = {
     grade2: 'Grado Chica/o 3',
     student3: 'Chica/o 4',
     grade3: 'Grado Chica/o 4',
+
+    wsapp0: 'WhatsApp 1',
+    wsapp1: 'WhatsApp 2',
+    wsapp2: 'WhatsApp 3'
 };
 
 const AddNewCar = createReactClass({
@@ -84,6 +91,9 @@ const AddNewCar = createReactClass({
             });
 
             s.familyId = f.familyId;
+            s.wsapp0 = f.wsapp0 || '';
+            s.wsapp1 = f.wsapp1 || '';
+            s.wsapp2 = f.wsapp2 || '';
 
             this.setState(s);
         }
@@ -94,7 +104,7 @@ const AddNewCar = createReactClass({
     },
 
     async doFocus(id) {
-        await wait.sleep(300);
+        await wait.sleep(400);
 
         if (this[id])
             this[id].focus();
@@ -108,11 +118,11 @@ const AddNewCar = createReactClass({
         this.setState(s);
     },
 
-    renderInput(id) {
+    renderInput(id, wsapp) {
         return <div style={{display: 'flex', alignItems: 'flex-end'}}>
             <TextField
                 id={id}
-                onChange={v => this.inputChanged(v, id)}
+                onChange={v => wsapp ? this.wsappInputChanged(v, id) : this.inputChanged(v, id)}
                 value={this.state[id]}
                 label={TEXTS[id]}
                 ref={el => this[id] = el}
@@ -142,6 +152,16 @@ const AddNewCar = createReactClass({
 
         if (v.length <= 7)
             this.setState({...this.state, newPlate: v});
+    },
+
+    wsappInputChanged(t, id) {
+        const v = t.replace(/[^0-9]/gi, '');
+
+        let s = {...this.state};
+
+        s[id] = v;
+
+        this.setState(s);
     },
 
     async checkMandatory(arr) {
@@ -177,6 +197,10 @@ const AddNewCar = createReactClass({
             if (data.student1 && data.grade1) ks[data.student1] = data.grade1;
             if (data.student2 && data.grade2) ks[data.student2] = data.grade2;
             if (data.student3 && data.grade3) ks[data.student3] = data.grade3;
+
+            r.wsapp0 = _.get(data, 'wsapp0', null);
+            r.wsapp1 = _.get(data, 'wsapp1', null);
+            r.wsapp2 = _.get(data, 'wsapp2', null);
 
             this.props.onConfirmed({family: r, car: data.newPlate, familyId: data.familyId});
         });
@@ -219,6 +243,10 @@ const AddNewCar = createReactClass({
 
                 {this.renderInput('grade3')}
                 {this.renderInput('student3')}
+
+                {this.renderInput('wsapp0', true)}
+                {this.renderInput('wsapp1', true)}
+                {this.renderInput('wsapp2', true)}
 
                 {!this.state.confirming &&
                 <div style={{display: 'flex', justifyContent: 'space-around', marginTop: '20px'}}>
