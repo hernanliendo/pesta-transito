@@ -1,12 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import './App.css';
 import {Button, Divider} from "react-md";
-import zipcelx from "zipcelx";
+// import zipcelx from "zipcelx";
 
 const createReactClass = require('create-react-class');
 const _ = require('lodash');
-const moment = require('moment');
 
 const AdminData = createReactClass({
 
@@ -34,54 +32,54 @@ const AdminData = createReactClass({
         return [year, month, day].join('-');
     },
 
-    onDownloadRequests() {
-        const toC = v => ({value: v || '', type: 'string'});
-        const usedKeys = ['car', 'displayName', 'n', 'status', 'emailVerified', 'email', 't', 'ets', 'rk', 'k', 'plate', 'state', 'uid', 'notes'];
-
-        this.props.db.ref('events').once('value').then(snapshot => {
-            const data =
-                [[
-                    toC('Fecha'), toC('Tipo'), toC('Email'), toC('Nombre'), toC('Estado'), toC('Familia'), toC('Patente'), toC('Notas'),
-                    toC('Conductor 1'), toC('Relación Conductor 1'), toC('Conductor 2'), toC('Relación Conductor 2'), toC('Chico/a 1'), toC('Grado Chico/a 1'),
-                    toC('Chico/a 2'), toC('Grado Chico/a 2'), toC('Chico/a 3'), toC('Grado Chico/a 3'), toC('Chico/a 4'), toC('Grado Chico/a 4')
-                ]]
-                    .concat(_.toPairs(snapshot.val())
-                        .filter(p => p[1].t !== 'newCar')
-                        .map(p => {
-                            const otherFields = _.toPairs(p[1]).filter(i => _.indexOf(usedKeys, i[0]) === -1).filter(i => !_.isEmpty(i));
-                            const drivers = otherFields.filter(i => _.indexOf(this.props.relations, i[1]) >= 0);
-                            const students = _.difference(otherFields, drivers);
-
-                            return [
-                                toC(moment(p[1].ets).format('DD/MM/YYYY HH:mm:ss')),
-                                toC(p[1].t),
-                                toC(p[1].email),
-                                toC(p[1].displayName),
-                                toC(p[1].status),
-                                toC(p[1].n),
-                                toC(p[1].car),
-                                toC(p[1].notes),
-                                toC(_.get(drivers, '[0][0]', '')),
-                                toC(_.get(drivers, '[0][1]', '')),
-                                toC(_.get(drivers, '[1][0]', '')),
-                                toC(_.get(drivers, '[1][1]', '')),
-                                toC(_.get(students, '[0][0]', '')),
-                                toC(_.get(students, '[0][1]', '')),
-                                toC(_.get(students, '[1][0]', '')),
-                                toC(_.get(students, '[1][1]', '')),
-                                toC(_.get(students, '[2][0]', '')),
-                                toC(_.get(students, '[2][1]', '')),
-                                toC(_.get(students, '[3][0]', '')),
-                                toC(_.get(students, '[3][1]', ''))
-                            ]
-                        }));
-
-            zipcelx({
-                filename: this.formatDate(new Date()) + '-pedidos',
-                sheet: {data}
-            });
-        });
-    },
+    // onDownloadRequests() {
+    //     const toC = v => ({value: v || '', type: 'string'});
+    //     const usedKeys = ['car', 'displayName', 'n', 'status', 'emailVerified', 'email', 't', 'ets', 'rk', 'k', 'plate', 'state', 'uid', 'notes'];
+    //
+    //     this.props.db.ref('events').once('value').then(snapshot => {
+    //         const data =
+    //             [[
+    //                 toC('Fecha'), toC('Tipo'), toC('Email'), toC('Nombre'), toC('Estado'), toC('Familia'), toC('Patente'), toC('Notas'),
+    //                 toC('Conductor 1'), toC('Relación Conductor 1'), toC('Conductor 2'), toC('Relación Conductor 2'), toC('Chico/a 1'), toC('Grado Chico/a 1'),
+    //                 toC('Chico/a 2'), toC('Grado Chico/a 2'), toC('Chico/a 3'), toC('Grado Chico/a 3'), toC('Chico/a 4'), toC('Grado Chico/a 4')
+    //             ]]
+    //                 .concat(_.toPairs(snapshot.val())
+    //                     .filter(p => p[1].t !== 'newCar')
+    //                     .map(p => {
+    //                         const otherFields = _.toPairs(p[1]).filter(i => _.indexOf(usedKeys, i[0]) === -1).filter(i => !_.isEmpty(i));
+    //                         const drivers = otherFields.filter(i => _.indexOf(this.props.relations, i[1]) >= 0);
+    //                         const students = _.difference(otherFields, drivers);
+    //
+    //                         return [
+    //                             toC(moment(p[1].ets).format('DD/MM/YYYY HH:mm:ss')),
+    //                             toC(p[1].t),
+    //                             toC(p[1].email),
+    //                             toC(p[1].displayName),
+    //                             toC(p[1].status),
+    //                             toC(p[1].n),
+    //                             toC(p[1].car),
+    //                             toC(p[1].notes),
+    //                             toC(_.get(drivers, '[0][0]', '')),
+    //                             toC(_.get(drivers, '[0][1]', '')),
+    //                             toC(_.get(drivers, '[1][0]', '')),
+    //                             toC(_.get(drivers, '[1][1]', '')),
+    //                             toC(_.get(students, '[0][0]', '')),
+    //                             toC(_.get(students, '[0][1]', '')),
+    //                             toC(_.get(students, '[1][0]', '')),
+    //                             toC(_.get(students, '[1][1]', '')),
+    //                             toC(_.get(students, '[2][0]', '')),
+    //                             toC(_.get(students, '[2][1]', '')),
+    //                             toC(_.get(students, '[3][0]', '')),
+    //                             toC(_.get(students, '[3][1]', ''))
+    //                         ]
+    //                     }));
+    //
+    //         zipcelx({
+    //             filename: this.formatDate(new Date()) + '-pedidos',
+    //             sheet: {data}
+    //         });
+    //     });
+    // },
 
     renderItem(i, idx) {
         return <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
@@ -116,9 +114,9 @@ const AdminData = createReactClass({
         const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 
         return <div style={{marginLeft: '10px'}}>
-            <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>
-                <Button icon onClick={this.onDownloadRequests}>cloud_download</Button>
-            </div>
+            {/*<div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>*/}
+            {/*<Button icon onClick={this.onDownloadRequests}>cloud_download</Button>*/}
+            {/*</div>*/}
 
             <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '5px'}}>
 
