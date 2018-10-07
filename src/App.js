@@ -131,7 +131,7 @@ class App extends Component {
 
         this.database.ref('admins').on('value', snapshot => this.setState({...this.state, isAdmin: snapshot.val()[this.user.uid]}));
 
-        this.database.ref('teachers').on('value', snapshot => this.setState({...this.state, isTeacher: snapshot.val()[this.user.uid]}));
+        this.database.ref('teachers').on('value', snapshot => this.setState({...this.state, isTeacher: !!snapshot.val()[this.user.uid]}));
 
         this.database.ref('.info/connected').on('value', snap => {
             const conn = snap.val();
