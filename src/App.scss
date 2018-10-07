@@ -34,6 +34,10 @@
   margin-top: -9px !important;
 }
 
+.md-icon-text:last-child {
+  padding-left: 4px;
+}
+
 @keyframes removing-item {
   100% {
     opacity: 0;

@@ -260,6 +260,9 @@ class App extends Component {
         if (status === 'teacherDelivered') {
             this.database.ref('requests/' + rk + '/teacherHidden').set(1);
         }
+        else if (status === 'requestWhatsApp') {
+            console.warn('pend');
+        }
         else
             this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
 
