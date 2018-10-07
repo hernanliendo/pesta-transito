@@ -257,7 +257,12 @@ class App extends Component {
     }
 
     changeStatus(rk, status) {
-        this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
+        if (status === 'teacherDelivered') {
+            this.database.ref('requests/' + rk + '/teacherHidden').set(1);
+        }
+        else
+            this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
+
         this.saveEvent({t: 'changeStatus', rk, status});
     }
 

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Avatar, Button, Divider, FontIcon} from 'react-md';
+import WhatsAppIcon from "./WhatsAppIcon";
 
 const createReactClass = require('create-react-class');
 const _ = require('lodash');
@@ -59,14 +60,21 @@ const Students = createReactClass({
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
         const onCharge = 'pending' === lastState ? 'Esperando' : _.split(this.props.users[lastUser].displayName, ' ')[0] + ' va llevando';
+        const isPendingRequest = 'pending' === lastState;
+        const teacherHidden = r.teacherHidden === 1;
         let color;
+        let plateFontSize = '14px';
 
-        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid && 'pending' !== lastState)
+        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid && 'pending' !== lastState) {
             color = '#FFEB3B';
+            plateFontSize = '24px';
+        }
         else if ('pending' !== lastState)
             color = 'rgba(0, 0, 0, 0.1)';
         else
             color = null;
+
+        if (this.props.isTeacher && (!isPendingRequest || teacherHidden)) return <div key={ridx}/>;
 
 
         return <div key={ridx}>
@@ -86,7 +94,7 @@ const Students = createReactClass({
 
                     {r.notes && <div style={{color: '#D32F2F'}} className="text-height md-text md-font-bold ptext-wrap">{r.notes}</div>}
 
-                    <div className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
+                    <div style={{fontSize: plateFontSize}} className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
 
                     {/*{_.toPairs(r.family.ds).map(p => <div key={p[0]} className="md-text--secondary ptext-wrap">{p[0] + ': ' + p[1]}</div>)}*/}
 
@@ -95,17 +103,19 @@ const Students = createReactClass({
 
                 <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
 
-                    {(this.props.isTeacher && 'pending' === lastState) &&
+                    {(this.props.isTeacher && isPendingRequest) &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>AHí VAMOS11</Button>
+                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'teacherDelivered')}>ENTREGADO</Button>
                     </div>
                     }
 
-                    {(!this.props.isTeacher && 'pending' === lastState) &&
+                    {(!this.props.isTeacher && isPendingRequest) &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>AHí VAMOS</Button>
                     </div>
                     }
+
+                    <WhatsAppIcon/>
 
                     {'transit' === lastState &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
