@@ -3,10 +3,9 @@ import PropTypes from "prop-types";
 import {Button, Divider} from "react-md";
 // import zipcelx from "zipcelx";
 
-const createReactClass = require('create-react-class');
 const _ = require('lodash');
 
-const AdminData = createReactClass({
+class AdminData extends React.Component {
 
     onDelete(i) {
         const carsToDelete = _.toPairs(this.props.model.cars).filter(p => p[1] === i.familyId).map(p => p[0]);
@@ -14,23 +13,23 @@ const AdminData = createReactClass({
             this.props.db.ref('2018/families/' + i.familyId).set(null);
             this.props.db.ref('2018/cars/' + carsToDelete[0]).set(null);
         }
-    },
+    }
 
     onEdit(i) {
         this.props.onEditFamily(i);
-    },
+    }
 
-    formatDate(date) {
-        let d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
-
-        return [year, month, day].join('-');
-    },
+    // formatDate(date) {
+    //     let d = new Date(date),
+    //         month = '' + (d.getMonth() + 1),
+    //         day = '' + d.getDate(),
+    //         year = d.getFullYear();
+    //
+    //     if (month.length < 2) month = '0' + month;
+    //     if (day.length < 2) day = '0' + day;
+    //
+    //     return [year, month, day].join('-');
+    // }
 
     // onDownloadRequests() {
     //     const toC = v => ({value: v || '', type: 'string'});
@@ -79,7 +78,7 @@ const AdminData = createReactClass({
     //             sheet: {data}
     //         });
     //     });
-    // },
+    // }
 
     renderItem(i, idx) {
         return <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
@@ -91,11 +90,11 @@ const AdminData = createReactClass({
                 <Button icon onClick={() => this.onDelete(i)}>delete</Button>
             </div>
         </div>;
-    },
+    }
 
     approve(id) {
         this.props.db.ref(`users/${id}/valid`).set(1);
-    },
+    }
 
     renderPending(i, idx) {
         return <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
@@ -106,7 +105,7 @@ const AdminData = createReactClass({
                 <Button icon onClick={() => this.approve(i[0])}>thumb_up</Button>
             </div>
         </div>;
-    },
+    }
 
     render() {
         const m = this.props.model;
@@ -131,7 +130,7 @@ const AdminData = createReactClass({
             </div>
         </div>;
     }
-});
+}
 
 AdminData.propTypes = {
     model: PropTypes.object.isRequired,

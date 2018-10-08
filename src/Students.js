@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Avatar, Button, Divider, FontIcon, SVGIcon} from 'react-md';
 
-const createReactClass = require('create-react-class');
 const _ = require('lodash');
 const wait = require('wait-promise');
 const WhatsAppIcon = () => (
@@ -14,26 +13,26 @@ const WhatsAppIcon = () => (
 
 let animationOnItem = -1;
 
-const Students = createReactClass({
+class Students extends React.Component {
 
-    getInitialState() {
+    static getInitialState() {
         return {
             previousRequests: []
         };
-    },
+    }
 
     componentDidMount() {
-        this.setState({...this.getInitialState(), previousRequests: this.props.requests});
-    },
+        this.setState({... Students.getInitialState(), previousRequests: this.props.requests});
+    }
 
     componentDidUpdate() {
         if (animationOnItem !== -1 || _.isEqual(this.props.requests, this.state.previousRequests)) return;
 
         if (this.props.requests.length < this.state.previousRequests.length)
-            this.animateItemOut();
+            this.animateItemOut().then();
         else
             this.setState({...this.state, previousRequests: this.props.requests});
-    },
+    }
 
     async animateItemOut() {
         const diff = this.state.previousRequests.filter(rr => !_.find(this.props.requests, {plate: rr.plate}));
@@ -48,7 +47,7 @@ const Students = createReactClass({
 
         animationOnItem = -1;
         this.setState({...this.state, previousRequests: this.props.requests});
-    },
+    }
 
     studentString(r, s) {
         const familyName = r.family.n.toLowerCase();
@@ -58,7 +57,7 @@ const Students = createReactClass({
             studentName += ' ' + familyName;
 
         return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + s[1].toUpperCase().trim() + ')';
-    },
+    }
 
     renderRequest(r, ridx) {
         const lastStatus = _.last(_.toPairs(r.statuses || {}));
@@ -133,7 +132,7 @@ const Students = createReactClass({
 
             <Divider/>
         </div>;
-    },
+    }
 
     render() {
         return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
@@ -153,7 +152,7 @@ const Students = createReactClass({
             </div>
         </div>;
     }
-});
+}
 
 Students.propTypes = {
     requests: PropTypes.array.isRequired,

@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Button, SelectField, TextField} from 'react-md';
 
-const createReactClass = require('create-react-class');
 const wait = require('wait-promise');
 const _ = require('lodash');
 
@@ -52,7 +51,7 @@ const TEXTS = {
     wsapp2: 'WhatsApp 3'
 };
 
-const AddNewCar = createReactClass({
+class AddNewCar extends React.Component {
 
     getInitialState() {
         let s = {confirming: false};
@@ -64,7 +63,7 @@ const AddNewCar = createReactClass({
         s.familyId = null;
 
         return s;
-    },
+    }
 
     componentDidMount() {
         if (this.props.editingFamily) {
@@ -100,15 +99,15 @@ const AddNewCar = createReactClass({
         else
             this.setState({...this.getInitialState(), newPlate: this.props.previousPlate ? this.props.previousPlate.trim() : ''});
 
-        this.doFocus('patente');
-    },
+        this.doFocus('patente').then();
+    }
 
     async doFocus(id) {
         await wait.sleep(400);
 
         if (this[id])
             this[id].focus();
-    },
+    }
 
     inputChanged(v, id) {
         let s = {...this.state};
@@ -116,7 +115,7 @@ const AddNewCar = createReactClass({
         s[id] = v;
 
         this.setState(s);
-    },
+    }
 
     renderInput(id, wsapp) {
         return <div style={{display: 'flex', alignItems: 'flex-end'}}>
@@ -132,7 +131,7 @@ const AddNewCar = createReactClass({
                 className="md-cell md-cell--bottom"
             />
         </div>;
-    },
+    }
 
     renderSelect(id) {
         return <SelectField
@@ -145,14 +144,14 @@ const AddNewCar = createReactClass({
             menuItems={this.props.relations}
             simplifiedMenu={true}
         />;
-    },
+    }
 
     plateChanged(t) {
         const v = t.replace(/[^a-z0-9]/gi, '').toUpperCase();
 
         if (v.length <= 7)
             this.setState({...this.state, newPlate: v});
-    },
+    }
 
     wsappInputChanged(t, id) {
         const v = t.replace(/[^0-9]/gi, '');
@@ -162,7 +161,7 @@ const AddNewCar = createReactClass({
         s[id] = v;
 
         this.setState(s);
-    },
+    }
 
     async checkMandatory(arr) {
         const missing = arr.filter(k => !this.state[k]);
@@ -174,7 +173,7 @@ const AddNewCar = createReactClass({
             return true;
         }
         return false;
-    },
+    }
 
     dataConfirmed() {
         this.checkMandatory(['newPlate', 'familyName', 'driver0', 'student0', 'grade0']).then(problems => {
@@ -204,7 +203,7 @@ const AddNewCar = createReactClass({
 
             this.props.onConfirmed({family: r, car: data.newPlate, familyId: data.familyId});
         });
-    },
+    }
 
     render() {
         return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{marginTop: '10px', display: 'flex', flexDirection: 'column'}}>
@@ -266,7 +265,7 @@ const AddNewCar = createReactClass({
             </div>
         </div>;
     }
-});
+}
 
 AddNewCar.propTypes = {
     previousPlate: PropTypes.string,
