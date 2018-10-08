@@ -11,6 +11,7 @@ const firebase = require('firebase/app');
 require('firebase/database');
 require('firebase/auth');
 
+const rp = require('request-promise');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
@@ -262,6 +263,22 @@ class App extends Component {
         }
         else if (status === 'requestWhatsApp') {
             console.warn('pend');
+
+            rp({
+                method: 'POST',
+                uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
+                body: {
+                    familyId: '-LJxvUs6g--23X1WfgJw',
+                    token: 'JKL93uJFJ939VBN5451J4K8gkjhshj89n'
+                },
+                json: true
+            })
+                .then(r => {
+                    console.warn('r', r);
+                })
+                .catch(err => {
+                    console.warn('err', err);
+                });
         }
         else
             this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
