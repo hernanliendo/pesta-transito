@@ -1,10 +1,10 @@
 'use strict';
 
-const botmakerToken = functions.config().botmaker.key;
 const rp = require('request-promise');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const db = admin.database();
+const botmakerToken = functions.config().botmaker.key;
 
 admin.initializeApp();
 
