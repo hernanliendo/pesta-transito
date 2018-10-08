@@ -22,7 +22,7 @@ class Students extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({... Students.getInitialState(), previousRequests: this.props.requests});
+        this.setState({...Students.getInitialState(), previousRequests: this.props.requests});
     }
 
     componentDidUpdate() {

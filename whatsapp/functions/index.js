@@ -14,7 +14,7 @@ const corsHandler = (req, res) => {
     if (req.method === 'OPTIONS') {
         res.set('Access-Control-Allow-Origin', '*');
         res.set('Access-Control-Allow-Methods', 'POST');
-        res.set('Access-Control-Allow-Headers', 'Content-Type');
+        res.set('Access-Control-Allow-Headers', 'Content-Type ');
         res.set('Access-Control-Max-Age', '2592000');
 
         return true;
@@ -27,11 +27,11 @@ const checkAuth = req => {
 };
 
 exports.log_event = functions.https.onRequest((req, res) => {
-    checkAuth(req);
-
     if (corsHandler(req, res)) return res.status(204).send('');
 
-    return bigquery
+    checkAuth(req);
+
+    bigquery
         .dataset('Audit')
         .table('logs')
         .insert([{
@@ -40,14 +40,15 @@ exports.log_event = functions.https.onRequest((req, res) => {
             user_email: req.body.e,
             user_id: req.body.uid,
             params: JSON.stringify(req.body.params),
-        }])
-        .then(() => res.status(200).send('ok'));
+        }]);
+
+    return res.status(200).send('ok');
 });
 
 exports.notify_parent = functions.https.onRequest((req, res) => {
-    checkAuth(req);
-
     if (corsHandler(req, res)) return res.status(204).send('');
+
+    checkAuth(req);
 
     return db.ref('2018/families/' + req.body.familyId).once('value')
         .then(snapshot => {

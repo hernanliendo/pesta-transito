@@ -68,7 +68,7 @@ class App extends Component {
         if (!evt) return;
 
         const params = {
-            ...this.flatten(evt),
+            ...evt,
             displayName: _.get(this, 'user.displayName', '')
         };
 
@@ -77,9 +77,9 @@ class App extends Component {
             uri: 'https://us-central1-pesta-transito.cloudfunctions.net/log_event',
             body: {
                 token: FUNCTIONS_TOKEN,
-                type: evt['t'] || 'log',
-                user_email: _.get(this, 'user.email', ''),
-                user_id: _.get(this, 'user.uid', ''),
+                t: evt['t'] || 'log',
+                e: _.get(this, 'user.email', ''),
+                uid: _.get(this, 'user.uid', ''),
                 params
             },
             json: true
@@ -96,10 +96,10 @@ class App extends Component {
         firebase.auth().languageCode = 'es';
         this.database = firebase.database();
 
-        this.saveEvent('after f.db');
+        this.saveEvent({v: 'after f.db'});
 
         firebase.auth().onAuthStateChanged(user => {
-            this.saveEvent('onAuthStateChanged: ' + (user ? user.uid : 'noid'));
+            this.saveEvent({v: 'onAuthStateChanged', user: (user ? user.uid : 'noid')});
 
             if (!user)
                 this.setState({...this.state, initializing: false});
@@ -112,7 +112,7 @@ class App extends Component {
 
                 this.setState({...this.state, initializing: false, user: {displayName: user.displayName, uid: user.uid, email: user.email}});
 
-                this.saveEvent('onAuthStateChanged done: ' + (user ? user.uid : 'noid'));
+                this.saveEvent({v: 'onAuthStateChanged done', user: (user ? user.uid : 'noid')});
             }
         });
     }
@@ -121,7 +121,8 @@ class App extends Component {
         this.database.ref('2018').on('value', snapshot => {
             this.model = snapshot.val();
             this.forceUpdate();
-            this.saveEvent('got model');
+            this.saveEvent({v: 'got model'});
+
         }, () => this.setState({...this.state, noAccess: true}));
 
         this.database.ref('requests').on('value', snapshot => {
@@ -139,7 +140,7 @@ class App extends Component {
         this.database.ref('.info/connected').on('value', snap => {
             const conn = snap.val();
             this.setState({...this.state, connected: conn});
-            this.saveEvent('got connected: ' + conn);
+            this.saveEvent({v: 'got model' + conn});
         });
     }
 
