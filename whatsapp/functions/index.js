@@ -23,8 +23,12 @@ const corsHandler = (req, res) => {
     return false;
 };
 
-exports.log_event = functions.https.onRequest((req, res) => {
+const checkAuth = req => {
     if (req.body.token !== 'JKL93uJFJ939VBN5451J4K8gkjhshj89n') throw new Error(`Invalid token [${req.body.token}]`);
+};
+
+exports.log_event = functions.https.onRequest((req, res) => {
+    checkAuth(req);
 
     if (corsHandler(req, res)) return res.status(204).send('');
 
@@ -42,7 +46,7 @@ exports.log_event = functions.https.onRequest((req, res) => {
 });
 
 exports.notify_parent = functions.https.onRequest((req, res) => {
-    if (req.body.token !== 'JKL93uJFJ939VBN5451J4K8gkjhshj89n') throw new Error(`Invalid token [${req.body.token}]`);
+    checkAuth(req);
 
     if (corsHandler(req, res)) return res.status(204).send('');
 
