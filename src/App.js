@@ -7,6 +7,7 @@ import Logo from './logo.png';
 import './App.css';
 import './firebaseui.css';
 
+const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
 const firebase = require('firebase/app');
 require('firebase/database');
 require('firebase/auth');
@@ -64,28 +65,29 @@ class App extends Component {
     }
 
     saveEvent(evt) {
-        if (!this.user) return;
+        if (!evt) return;
 
-        this.database.ref('events').push().set(Object.assign({
-            ets: firebase.database.ServerValue.TIMESTAMP,
-            displayName: this.user.displayName || 'no name',
-            email: this.user.email,
-            emailVerified: this.user.emailVerified || false,
-        }, ...this.flatten(evt)));
+        const params = {
+            ...this.flatten(evt),
+            displayName: _.get(this, 'user.displayName', '')
+        };
+
+        rp({
+            method: 'POST',
+            uri: 'https://us-central1-pesta-transito.cloudfunctions.net/log_event',
+            body: {
+                token: FUNCTIONS_TOKEN,
+                type: evt['t'] || 'log',
+                user_email: _.get(this, 'user.email', ''),
+                user_id: _.get(this, 'user.uid', ''),
+                params
+            },
+            json: true
+        }).then();
     }
 
     onEditFamily(f) {
         this.setState({...this.state, editingFamily: f, tabIndex: 0, addingNewCar: true});
-    }
-
-    log(obj) {
-        if (!obj) return;
-
-        this.database.ref('logs').push().set({
-            v: JSON.stringify(obj),
-            ts: firebase.database.ServerValue.TIMESTAMP,
-            displayName: (this.user && this.user.displayName) ? this.user.displayName : 'no name',
-        });
     }
 
     componentWillMount() {
@@ -94,10 +96,10 @@ class App extends Component {
         firebase.auth().languageCode = 'es';
         this.database = firebase.database();
 
-        this.log('after f.db');
+        this.saveEvent('after f.db');
 
         firebase.auth().onAuthStateChanged(user => {
-            this.log('onAuthStateChanged: ' + (user ? user.uid : 'noid'));
+            this.saveEvent('onAuthStateChanged: ' + (user ? user.uid : 'noid'));
 
             if (!user)
                 this.setState({...this.state, initializing: false});
@@ -110,7 +112,7 @@ class App extends Component {
 
                 this.setState({...this.state, initializing: false, user: {displayName: user.displayName, uid: user.uid, email: user.email}});
 
-                this.log('onAuthStateChanged done: ' + (user ? user.uid : 'noid'));
+                this.saveEvent('onAuthStateChanged done: ' + (user ? user.uid : 'noid'));
             }
         });
     }
@@ -119,7 +121,7 @@ class App extends Component {
         this.database.ref('2018').on('value', snapshot => {
             this.model = snapshot.val();
             this.forceUpdate();
-            this.log('got model');
+            this.saveEvent('got model');
         }, () => this.setState({...this.state, noAccess: true}));
 
         this.database.ref('requests').on('value', snapshot => {
@@ -137,7 +139,7 @@ class App extends Component {
         this.database.ref('.info/connected').on('value', snap => {
             const conn = snap.val();
             this.setState({...this.state, connected: conn});
-            this.log('got connected: ' + conn);
+            this.saveEvent('got connected: ' + conn);
         });
     }
 
@@ -269,7 +271,7 @@ class App extends Component {
                 uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
                 body: {
                     familyId: '-LJxvUs6g--23X1WfgJw',
-                    token: 'JKL93uJFJ939VBN5451J4K8gkjhshj89n'
+                    token: FUNCTIONS_TOKEN
                 },
                 json: true
             })

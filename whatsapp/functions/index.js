@@ -3,13 +3,12 @@
 const rp = require('request-promise');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const bigquery = require('@google-cloud/bigquery')();
+
 admin.initializeApp();
 
 const db = admin.database();
 const botmakerToken = functions.config().botmaker.key;
-
-const BigQuery = require('@google-cloud/bigquery');
-const bigquery = new BigQuery({projectId: 'pesta-transito'});
 
 const corsHandler = (req, res) => {
     if (req.method === 'OPTIONS') {
@@ -36,11 +35,11 @@ exports.log_event = functions.https.onRequest((req, res) => {
         .dataset('Audit')
         .table('logs')
         .insert([{
-            type: 't1',
+            type: req.body.t,
             ts: Math.trunc(new Date().getTime() / 1000),
-            user_email: 'e1',
-            user_id: 'u1',
-            params: '{"a":1}',
+            user_email: req.body.e,
+            user_id: req.body.uid,
+            params: JSON.stringify(req.body.params),
         }])
         .then(() => res.status(200).send('ok'));
 });
@@ -56,15 +55,16 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
 
             return rp({
                 method: 'POST',
-                uri: 'https://go.botmaker.com/api/v1.0/message/v3',
-                // uri: 'https://go.botmaker.com/api/v1.0/intent/v2',
+                // uri: 'https://go.botmaker.com/api/v1.0/message/v3',
+                uri: 'https://go.botmaker.com/api/v1.0/intent/v2',
                 headers: {'access-token': botmakerToken},
                 body: {
                     chatPlatform: 'whatsapp',
                     chatChannelNumber: '5491126225607',
                     platformContactId: '5491130467755',
-                    messageText: 'hola 1234',
-                    //ruleNameOrId: 'xxxxx',
+                    // messageText: 'hola 1234',
+                    ruleNameOrId: 'alumno_listo_singular',
+                    params: {driverName: 'conductor 1', students: 'estudiantes', dropLocation: 'Dársena'}
                 },
                 json: true
             });
