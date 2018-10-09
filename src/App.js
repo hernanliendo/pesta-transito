@@ -261,28 +261,22 @@ class App extends Component {
     }
 
     changeStatus(rk, status) {
-        if (status === 'teacherDelivered') {
+        if (status === 'teacherDelivered')
             this.database.ref('requests/' + rk + '/teacherHidden').set(1);
-        }
-        else if (status === 'requestWhatsApp') {
-            console.warn('pend');
 
+        else if (status === 'requestWhatsApp')
             rp({
                 method: 'POST',
                 uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
                 body: {
-                    familyId: '-LJxvUs6g--23X1WfgJw',
+                    familyId: '-LKn1tJ7z6q4eEA_ehiB',
                     token: FUNCTIONS_TOKEN
                 },
                 json: true
             })
-                .then(r => {
-                    console.warn('r', r);
-                })
-                .catch(err => {
-                    console.warn('err', err);
-                });
-        }
+                .then(() => this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid}))
+                .catch(err => console.error(err.stack));
+
         else
             this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
 

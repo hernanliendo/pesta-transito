@@ -15,14 +15,8 @@ let animationOnItem = -1;
 
 class Students extends React.Component {
 
-    static getInitialState() {
-        return {
-            previousRequests: []
-        };
-    }
-
-    componentDidMount() {
-        this.setState({...Students.getInitialState(), previousRequests: this.props.requests});
+    componentWillMount() {
+        this.setState({previousRequests: this.props.requests || []});
     }
 
     componentDidUpdate() {
@@ -100,8 +94,6 @@ class Students extends React.Component {
 
                     <div style={{fontSize: plateFontSize}} className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
 
-                    {/*{_.toPairs(r.family.ds).map(p => <div key={p[0]} className="md-text--secondary ptext-wrap">{p[0] + ': ' + p[1]}</div>)}*/}
-
                     <div className="text-height md-caption ptext-wrap">{onCharge}</div>
                 </div>
 
@@ -117,13 +109,21 @@ class Students extends React.Component {
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r.k, 'transit')}>AHí VAMOS</Button>
 
+                        {_.has(r, 'family.wsapp0') &&
                         <Button style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r.k, 'requestWhatsApp')}>A DARSENA</Button>
+                        }
                     </div>
                     }
 
                     {'transit' === lastState &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>
+                        <Button raised onClick={() => this.props.onChangeStatus(r.k, 'pending')}>CANCELO</Button>
+                    </div>
+                    }
+
+                    {'requestWhatsApp' === lastState &&
+                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button raised onClick={() => this.props.onChangeStatus(r.k, 'pending')}>CANCELO</Button>
                     </div>
                     }

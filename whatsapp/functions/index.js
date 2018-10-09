@@ -10,16 +10,11 @@ admin.initializeApp();
 const db = admin.database();
 const botmakerToken = functions.config().botmaker.key;
 
-const corsHandler = (req, res) => {
-    if (req.method === 'OPTIONS') {
-        res.set('Access-Control-Allow-Origin', '*');
-        res.set('Access-Control-Allow-Methods', 'POST');
-        res.set('Access-Control-Allow-Headers', 'Content-Type ');
-        res.set('Access-Control-Max-Age', '2592000');
-
-        return true;
-    }
-    return false;
+const setCors = (req, res) => {
+    res.set('Access-Control-Allow-Origin', req.headers['origin']);
+    res.set('Access-Control-Allow-Methods', 'POST');
+    res.set('Access-Control-Allow-Headers', 'token, content-type, accept-encoding');
+    res.set('Access-Control-Max-Age', '2592000');
 };
 
 const checkAuth = req => {
@@ -27,7 +22,9 @@ const checkAuth = req => {
 };
 
 exports.log_event = functions.https.onRequest((req, res) => {
-    if (corsHandler(req, res)) return res.status(204).send('');
+    setCors(req, res);
+
+    if (req.method === 'OPTIONS') return res.status(200).send('');
 
     checkAuth(req);
 
@@ -46,7 +43,9 @@ exports.log_event = functions.https.onRequest((req, res) => {
 });
 
 exports.notify_parent = functions.https.onRequest((req, res) => {
-    if (corsHandler(req, res)) return res.status(204).send('');
+    setCors(req, res);
+
+    if (req.method === 'OPTIONS') return res.status(200).send('');
 
     checkAuth(req);
 
@@ -54,21 +53,22 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
         .then(snapshot => {
             const family = snapshot.val();
 
-            return rp({
-                method: 'POST',
-                // uri: 'https://go.botmaker.com/api/v1.0/message/v3',
-                uri: 'https://go.botmaker.com/api/v1.0/intent/v2',
-                headers: {'access-token': botmakerToken},
-                body: {
-                    chatPlatform: 'whatsapp',
-                    chatChannelNumber: '5491126225607',
-                    platformContactId: '5491130467755',
-                    // messageText: 'hola 1234',
-                    ruleNameOrId: 'alumno_listo_singular',
-                    params: {driverName: 'conductor 1', students: 'estudiantes', dropLocation: 'Dársena'}
-                },
-                json: true
-            });
+            return Promise.all(['wsapp0', 'wsapp1', 'wsapp2']
+                .map(k => family[k])
+                .filter(n => n)
+                .map(n => rp({
+                    method: 'POST',
+                    uri: 'https://go.botmaker.com/api/v1.0/intent/v2',
+                    headers: {'access-token': botmakerToken},
+                    body: {
+                        chatPlatform: 'whatsapp',
+                        chatChannelNumber: '5491126225607',
+                        platformContactId: n,
+                        ruleNameOrId: 'alumno_listo_singular',
+                        params: {driverName: 'conductor 1', students: 'estudiantes', dropLocation: 'Dársena Rápida'}
+                    },
+                    json: true
+                })));
         }, error => {
             throw error;
         })

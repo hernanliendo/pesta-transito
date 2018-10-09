@@ -119,9 +119,9 @@ class AdminData extends React.Component {
 
             <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '5px'}}>
 
-                {pendingUsers.map(this.renderPending)}
+                {pendingUsers.map((itm, idx) => this.renderPending(itm, idx))}
 
-                {items.map(this.renderItem)}
+                {items.map((itm, idx) => this.renderItem(itm, idx))}
 
                 {pendingUsers.length > 0 && <Divider/>}
 

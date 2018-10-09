@@ -53,7 +53,7 @@ const TEXTS = {
 
 class AddNewCar extends React.Component {
 
-    getInitialState() {
+    componentWillMount() {
         let s = {confirming: false};
 
         FIELDS.forEach(f => s[f] = '');
@@ -62,13 +62,8 @@ class AddNewCar extends React.Component {
         s.driverType1 = 'Madre/Padre';
         s.familyId = null;
 
-        return s;
-    }
-
-    componentDidMount() {
         if (this.props.editingFamily) {
             const f = this.props.editingFamily;
-            let s = {...this.getInitialState()};
 
             s.newPlate = f.plate;
             s.familyName = f.n;
@@ -97,7 +92,7 @@ class AddNewCar extends React.Component {
             this.setState(s);
         }
         else
-            this.setState({...this.getInitialState(), newPlate: this.props.previousPlate ? this.props.previousPlate.trim() : ''});
+            this.setState({...s, newPlate: this.props.previousPlate ? this.props.previousPlate.trim() : ''});
 
         this.doFocus('patente').then();
     }
