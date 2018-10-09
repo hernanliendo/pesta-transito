@@ -49,12 +49,12 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
 
     checkAuth(req);
 
-    return db.ref('2018/families/' + req.body.familyId).once('value')
+    return db.ref('requests/' + req.body.requestId).once('value')
         .then(snapshot => {
-            const family = snapshot.val();
+            const carRequest = snapshot.val();
 
             return Promise.all(['wsapp0', 'wsapp1', 'wsapp2']
-                .map(k => family[k])
+                .map(k => carRequest.family[k])
                 .filter(n => n)
                 .map(n => rp({
                     method: 'POST',

@@ -260,7 +260,9 @@ class App extends Component {
         this.saveEvent({t: 'newCar', newFamilyCar});
     }
 
-    changeStatus(rk, status) {
+    changeStatus(request, status) {
+        const rk = request.k;
+
         if (status === 'teacherDelivered')
             this.database.ref('requests/' + rk + '/teacherHidden').set(1);
 
@@ -269,7 +271,7 @@ class App extends Component {
                 method: 'POST',
                 uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
                 body: {
-                    familyId: '-LKn1tJ7z6q4eEA_ehiB',
+                    requestId: rk,
                     token: FUNCTIONS_TOKEN
                 },
                 json: true
@@ -454,7 +456,7 @@ class App extends Component {
                 isTeacher={this.state.isTeacher}
                 currentUser={this.state.user}
                 onDelivered={rk => this.onDelivered(rk)}
-                onChangeStatus={(rk, status) => this.changeStatus(rk, status)}
+                onChangeStatus={(request, status) => this.changeStatus(request, status)}
             />}
 
             {this.state.tabIndex === 2 && <AdminData
