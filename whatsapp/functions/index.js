@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const rp = require('request-promise');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -52,23 +53,48 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
     return db.ref('requests/' + req.body.requestId).once('value')
         .then(snapshot => {
             const carRequest = snapshot.val();
+            const dropLocation = 'Dársena Rápida';
 
-            return Promise.all(['wsapp0', 'wsapp1', 'wsapp2']
-                .map(k => carRequest.family[k])
-                .filter(n => n)
-                .map(n => rp({
-                    method: 'POST',
-                    uri: 'https://go.botmaker.com/api/v1.0/intent/v2',
-                    headers: {'access-token': botmakerToken},
-                    body: {
-                        chatPlatform: 'whatsapp',
-                        chatChannelNumber: '5491126225607',
-                        platformContactId: n,
-                        ruleNameOrId: 'alumno_listo_singular',
-                        params: {driverName: 'conductor 1', students: 'estudiantes', dropLocation: 'Dársena Rápida'}
-                    },
-                    json: true
-                })));
+            const driverName = _.join(
+                _.toPairs(
+                    _.get(carRequest, 'family.ds', {}))
+                    .map(p => p[0]),
+                '/'
+            );
+
+            const studentsArray = _.toPairs(
+                _.get(carRequest, 'family.ks', {})
+            )
+                .filter((p, pidx) => !carRequest.unrequested || !carRequest.unrequested[pidx])
+                .map(p =>
+                    _.join(_.split(p[0].toLowerCase(), ' ').map(t => _.capitalize(t)), ' ')
+                );
+
+            const students = '';
+            const plural = _.has(carRequest, 'notes') || studentsArray.length > 1;
+
+            console.warn('carRequest', carRequest);
+
+            console.warn(driverName, students, dropLocation, plural);
+
+            return true;
+
+            // return Promise.all(['wsapp0', 'wsapp1', 'wsapp2']
+            //     .map(k => carRequest.family[k])
+            //     .filter(n => n)
+            //     .map(n => rp({
+            //         method: 'POST',
+            //         uri: 'https://go.botmaker.com/api/v1.0/intent/v2',
+            //         headers: {'access-token': botmakerToken},
+            //         body: {
+            //             chatPlatform: 'whatsapp',
+            //             chatChannelNumber: '5491126225607',
+            //             platformContactId: n,
+            //             ruleNameOrId: plural ? 'alumno_listo_plural' : 'alumno_listo_singular',
+            //             params: {driverName, students, dropLocation}
+            //         },
+            //         json: true
+            //     })));
         }, error => {
             throw error;
         })
