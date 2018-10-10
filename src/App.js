@@ -16,7 +16,7 @@ const rp = require('request-promise');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.46';
+const VERSION = '0.47';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -87,7 +87,7 @@ class App extends Component {
     }
 
     onEditFamily(f) {
-        this.setState({...this.state, editingFamily: f, tabIndex: 0, addingNewCar: true});
+        this.setState({...this.state, editingFamily: f, tabIndex: 1, addingNewCar: true});
     }
 
     componentWillMount() {
@@ -266,7 +266,9 @@ class App extends Component {
         if (status === 'teacherDelivered')
             this.database.ref('requests/' + rk + '/teacherHidden').set(1);
 
-        else if (status === 'requestWhatsApp')
+        else if (status === 'requestWhatsApp') {
+            this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
+
             rp({
                 method: 'POST',
                 uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
@@ -276,9 +278,8 @@ class App extends Component {
                 },
                 json: true
             })
-                .then(() => this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid}))
                 .catch(err => console.error(err.stack));
-
+        }
         else
             this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
 
@@ -335,10 +336,6 @@ class App extends Component {
 
             {(plates.length === 0 && this.state.searchText.length === 0 && !this.state.addingNotes) &&
             <div className="md-caption" style={{position: 'absolute', bottom: '60px'}}>
-
-                <div style={{display: 'flex', marginBottom: '20px', justifyContent: 'center'}}>
-                    <img style={{width: '140px', height: '45px', marginTop: '30px'}} src={Logo} alt="Colegio Pestalozzi"/>
-                </div>
                 <div>
                     Aquí podés ingresar la patente de un auto que está esperando por sus hijos. Cuando lo confirmes un aviso se enviará al Colegio
                 </div>
@@ -448,16 +445,18 @@ class App extends Component {
 
             <div style={{marginBottom: '5px'}}>&nbsp;</div>
 
-            {(!this.state.addingNotes && this.state.tabIndex === 0) && this.renderPlatesSearch()}
-
-            {this.state.tabIndex === 1 && <Students
+            {(!this.state.addingNotes && this.state.tabIndex === 0) &&
+            <Students
                 requests={this.state.requests}
-                users={this.state.users}
+                users={this.state.users || {}}
                 isTeacher={this.state.isTeacher}
                 currentUser={this.state.user}
                 onDelivered={rk => this.onDelivered(rk)}
                 onChangeStatus={(request, status) => this.changeStatus(request, status)}
-            />}
+            />
+            }
+
+            {this.state.tabIndex === 1 && this.renderPlatesSearch()}
 
             {this.state.tabIndex === 2 && <AdminData
                 model={this.model}
@@ -503,8 +502,8 @@ class App extends Component {
             {(!this.state.addingNotes) &&
             <BottomNavigation
                 links={[
-                    {label: 'AUTOS', icon: <FontIcon>directions_car</FontIcon>},
-                    {label: 'ALUMNOS', icon: <FontIcon>face</FontIcon>}
+                    {label: 'ALUMNOS', icon: <FontIcon>face</FontIcon>},
+                    {label: 'AUTOS', icon: <FontIcon>directions_car</FontIcon>}
                 ].concat(this.state.isAdmin ? [{label: 'DATOS', icon: <FontIcon>folder_shared</FontIcon>}] : [])}
                 dynamic={false}
                 colored
