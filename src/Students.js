@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Avatar, Button, Divider, FontIcon, SVGIcon} from 'react-md';
+import Logo from "./logo.png";
 
 const _ = require('lodash');
 const wait = require('wait-promise');
@@ -140,9 +141,15 @@ class Students extends React.Component {
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
                 {this.state.previousRequests.length === 0 &&
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                    <FontIcon style={{fontSize: '250px'}}>face</FontIcon>
-                    <span className="md-caption md-text-center" style={{fontSize: '30px'}}>En este momento no hay autos esperando</span>
+                <div>
+                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <FontIcon style={{fontSize: '250px'}}>face</FontIcon>
+                        <span className="md-caption md-text-center" style={{fontSize: '30px'}}>En este momento no hay autos esperando</span>
+                    </div>
+
+                    <div style={{display: 'flex', marginBottom: '20px', justifyContent: 'center'}}>
+                        <img style={{width: '140px', height: '45px', marginTop: '30px'}} src={Logo} alt="Colegio Pestalozzi"/>
+                    </div>
                 </div>
                 }
 
