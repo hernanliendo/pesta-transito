@@ -416,7 +416,6 @@ class App extends Component {
 
         if (!this.model && !this.state.noAccess) return App.loader();
 
-
         if (this.state.noAccess) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
             <FontIcon style={{fontSize: '170px'}}>pan_tool</FontIcon>
 
@@ -430,6 +429,7 @@ class App extends Component {
             <span className="md-caption md-text-center" style={{fontSize: '28px'}}>En este momento no tenés conexión a internet</span>
         </div>;
 
+        if (!this.state.users) return App.loader();
 
         return <div>
             <Toolbar
@@ -448,7 +448,7 @@ class App extends Component {
             {(!this.state.addingNotes && this.state.tabIndex === 0) &&
             <Students
                 requests={this.state.requests}
-                users={this.state.users || {}}
+                users={this.state.users}
                 isTeacher={this.state.isTeacher}
                 currentUser={this.state.user}
                 onDelivered={rk => this.onDelivered(rk)}
