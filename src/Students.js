@@ -124,7 +124,7 @@ class Students extends React.Component {
                     </div>
                     }
 
-                    {'transit' === lastState &&
+                    {('transit' === lastState || 'parentReplied' === lastState) &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>
                         <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
