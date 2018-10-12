@@ -85,12 +85,26 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
                         chatChannelNumber: '5491126225607',
                         platformContactId: n,
                         ruleNameOrId: plural ? 'alumno_listo_plural' : 'alumno_listo_singular',
-                        params: {driverName, students, dropLocation}
+                        params: {driverName, students, dropLocation, requestId: req.body.requestId}
                     },
                     json: true
                 })));
         }, error => {
             throw error;
         })
+        .then(() => res.status(200).send('ok'));
+});
+
+exports.parent_replied = functions.https.onRequest((req, res) => {
+    setCors(req, res);
+
+    if (req.method === 'OPTIONS') return res.status(200).send('');
+
+    checkAuth(req);
+
+    return db
+        .ref('requests/' + req.body.requestId + '/statuses')
+        .push()
+        .set({state: 'parentReplied', resp: req.body.resp, uid: 'system'})
         .then(() => res.status(200).send('ok'));
 });

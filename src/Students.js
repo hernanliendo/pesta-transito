@@ -58,7 +58,15 @@ class Students extends React.Component {
         const lastStatus = _.last(_.toPairs(r.statuses || {}));
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
-        const onCharge = 'pending' === lastState ? 'Esperando' : _.split(this.props.users[lastUser].displayName, ' ')[0] + ' va llevando' + ('requestWhatsApp' === lastState ? ' a dársena' : '');
+        let onCharge = (lastUser !== 'system' ? _.split(this.props.users[lastUser].displayName, ' ')[0] : '') + ' va llevando';
+
+        if ('pending' === lastState)
+            onCharge = 'Esperando';
+        else if ('parentReplied' === lastState)
+            onCharge = `Conductor dijo: ${lastStatus[1].resp}`;
+        else if ('requestWhatsApp' === lastState)
+            onCharge = 'Esperá confirmación del conductor';
+
         const isPendingRequest = 'pending' === lastState;
         const teacherHidden = r.teacherHidden === 1;
         let color;
