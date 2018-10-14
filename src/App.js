@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Avatar, BottomNavigation, Button, Card, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
-import Students from "./Students";
-import AdminData from "./AdminData";
-import AddNewCar from "./AddNewCar";
+import Students from "./components/Students";
+import AdminData from "./components/AdminData";
+import AddNewCar from "./components/AddNewCar";
 import Logo from './logo.png';
 import './App.css';
 import './firebaseui.css';

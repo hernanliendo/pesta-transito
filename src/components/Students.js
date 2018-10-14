@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Avatar, Button, Divider, FontIcon, SVGIcon} from 'react-md';
-import Logo from "./logo.png";
+import Logo from "../logo.png";
 
 const _ = require('lodash');
 const wait = require('wait-promise');
