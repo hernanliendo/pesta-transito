@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Avatar, BottomNavigation, Button, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
+import {BottomNavigation, Button, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
 import Loadable from 'react-loadable';
 
 import Students from "./components/Students";
@@ -12,7 +12,6 @@ require('firebase/auth');
 
 const rp = require('request-promise');
 const _ = require('lodash');
-const wait = require('wait-promise');
 
 const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
 const VERSION = '0.51';
@@ -32,8 +31,8 @@ const AdminData = Loadable({
     }
 });
 
-const AddNewCar = Loadable({
-    loader: () => import('./components/AddNewCar'),
+const SearchCar = Loadable({
+    loader: () => import('./components/SearchCar'),
     loading() {
         return <Loader/>;
     }
@@ -190,46 +189,6 @@ class App extends Component {
         this.setState({...this.state, toasts: this.state.toasts.concat({text: msg})});
     }
 
-    textChanged(t) {
-        const v = t.replace(/[^a-z0-9]/gi, '').toUpperCase();
-
-        if (v.length <= 7)
-            this.setState({...this.state, searchText: v, searchResult: v.length === 0 ? [] : Object.keys(this.model.cars).filter(c => c.indexOf(v) !== -1)});
-    }
-
-    async clearText() {
-        this.setState({...this.state, searchText: '', searchResult: []});
-
-        await wait.sleep(400);
-
-        if (this.plateSearchRef)
-            this.plateSearchRef.focus();
-    }
-
-    renderResults(plate, ridx) {
-        const family = this.model.families[this.model.cars[plate]];
-
-        if (!family) return <div/>;
-
-        return <div onClick={() => this.setState({...this.state, addingNotes: {plate, family}, searchText: '', searchResult: []})}
-                    key={ridx} style={{display: 'flex', marginBottom: '25px', minHeight: '100px', alignItems: 'center', justifyContent: 'center'}}>
-            <div style={{marginRight: '10px', minWidth: '40px'}}>
-                <Avatar icon={<FontIcon>directions_car</FontIcon>}/>
-            </div>
-
-            <div style={{marginRight: '10px', width: 'calc(100vw - 225px)', maxHeight: '100px'}}>
-                <div className="md-text ptext-wrap md-font-semibold">{plate + ' ' + family.n}</div>
-
-                {_.toPairs(family.ks).map(p => <div key={p[0]} className="md-text--secondary ptext-wrap">{p[0] + ', ' + p[1]}</div>)}
-
-            </div>
-
-            <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
-                <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.setState({...this.state, addingNotes: {plate, family}, searchText: '', searchResult: []})}>SELECCIONAR</Button>
-            </div>
-        </div>;
-    }
-
     hideNotes() {
         this.setState({...this.state, addingNotes: null, searchText: '', searchResult: []});
     }
@@ -336,67 +295,6 @@ class App extends Component {
                 .then(saveE);
     }
 
-    renderPlatesSearch() {
-        if (this.state.addingNewCar) return <AddNewCar previousPlate={this.state.searchText}
-                                                       showMessage={m => this.showMessage(m)}
-                                                       model={this.model}
-                                                       editingFamily={this.state.editingFamily}
-                                                       relations={relations}
-                                                       onConfirmed={newFamilyCar => this.newCarConfirmed(newFamilyCar)}
-                                                       onCancel={() => this.setState({...this.state, editingFamily: null, addingNewCar: false, searchText: '', searchResult: []})}/>;
-
-        const plates = this.state.searchResult;
-        const searchText = this.state.searchText;
-
-        return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{marginTop: '4px', display: 'flex', flexDirection: 'column'}}>
-
-            <div style={{display: 'flex', alignItems: 'flex-end', marginTop: '-9px'}}>
-                <TextField
-                    id="patente"
-                    label="Patente"
-                    ref={ref => this.plateSearchRef = ref}
-                    fullWidth
-                    leftIcon={<FontIcon>directions_car</FontIcon>}
-                    onChange={v => this.textChanged(v)}
-                    value={this.state.searchText}
-                    lineDirection="center"
-                    className="md-cell md-cell--bottom"
-                />
-
-                {searchText.length > 0 &&
-                <Button onClick={() => this.clearText()} style={{marginBottom: '10px', marginLeft: '-50px'}} icon iconChildren={<FontIcon>clear</FontIcon>}/>
-                }
-            </div>
-
-            <div style={{display: 'flex', flexDirection: 'column'}}>
-                {
-                    (plates.length === 0 && this.state.searchText.length > 0) &&
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <Button style={{fontSize: '18px'}} flat primary onClick={() => this.setState({...this.state, addingNewCar: true})}>AGREGAR AUTO</Button>
-                        <span className="md-caption" style={{fontSize: '30px'}}>Sin resultados</span>
-                        <FontIcon style={{fontSize: '250px'}}>directions_car</FontIcon>
-                    </div>
-                }
-
-                {plates.map((p, ridx) => this.renderResults(p, ridx))}
-
-                <div style={{marginBottom: '50px'}}>&nbsp;</div>
-
-            </div>
-
-            {(plates.length === 0 && this.state.searchText.length === 0 && !this.state.addingNotes) &&
-            <div className="md-caption" style={{position: 'absolute', bottom: '60px'}}>
-                <div>
-                    Aquí podés ingresar la patente de un auto que está esperando por sus hijos. Cuando lo confirmes un aviso se enviará al Colegio
-                </div>
-                <div style={{display: 'flex', marginTop: '5px', justifyContent: 'center'}}>
-                    ¿Feedback? Escribinos&nbsp;<a href="mailto:hernan.liendo@gmail.com?Subject=Pesta Transito" target="_top">aquí</a>
-                </div>
-            </div>
-            }
-        </div>;
-    }
-
     render() {
         if (this.state.initializing) return <Loader/>;
 
@@ -435,7 +333,14 @@ class App extends Component {
             />
             }
 
-            {this.state.tabIndex === 1 && this.renderPlatesSearch()}
+            {this.state.tabIndex === 1 && <SearchCar
+                showMessage={m => this.showMessage(m)}
+                newCarConfirmed={m => this.newCarConfirmed(m)}
+                model={this.model}
+                relations={relations}
+                state={this.state}
+                setState={s => this.setState(s)}
+            />}
 
             {this.state.tabIndex === 2 && <AdminData
                 model={this.model}
