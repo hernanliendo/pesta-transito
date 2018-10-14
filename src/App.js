@@ -16,7 +16,7 @@ const rp = require('request-promise');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.49';
+const VERSION = '0.50';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -106,13 +106,12 @@ class App extends Component {
             else {
                 this.user = user;
 
-                this.database.ref(`users/${user.uid}/displayName`).set(user.displayName);
-
-                this.listenModel();
-
-                this.setState({...this.state, initializing: false, user: {displayName: user.displayName, uid: user.uid, email: user.email}});
-
-                this.saveEvent({v: 'onAuthStateChanged done', user: (user ? user.uid : 'noid')});
+                this.database
+                    .ref(`users/${user.uid}/displayName`)
+                    .set(user.displayName)
+                    .then(() => this.listenModel())
+                    .then(() => this.setState({...this.state, initializing: false, user: {displayName: user.displayName, uid: user.uid, email: user.email}}))
+                    .then(() => this.saveEvent({v: 'onAuthStateChanged done', user: (user ? user.uid : 'noid')}))
             }
         });
     }
@@ -147,9 +146,10 @@ class App extends Component {
     onDelivered(rk) {
         const request = this.state.requests.filter(r => r.k === rk)[0];
 
-        this.saveEvent({t: 'delivered', request});
-
-        this.database.ref('requests/' + rk).set(null, () => this.showMessage('Se entregaron chicos a ' + request.plate));
+        this.database
+            .ref('requests/' + rk)
+            .set(null, () => this.showMessage('Se entregaron chicos a ' + request.plate))
+            .then(() => this.saveEvent({t: 'delivered', request}));
     }
 
     showMessage(msg) {
@@ -221,19 +221,19 @@ class App extends Component {
         if (this.state.requests.filter(ri => ri.plate === r.plate).length === 0) {
             const newRequestRef = this.database.ref('requests').push();
 
-            newRequestRef.set(r, () => {
-                this.showMessage('Se ha notificado al Colegio');
+            newRequestRef
+                .set(r, () => {
+                    this.showMessage('Se ha notificado al Colegio');
 
-                let order = 0;
+                    let order = 0;
 
-                (this.state.requests || []).filter(rr => rr.ord).forEach(rr => order = rr.ord);
+                    (this.state.requests || []).filter(rr => rr['ord']).forEach(rr => order = rr['ord']);
 
-                order++;
+                    order++;
 
-                this.database.ref('requests/' + newRequestRef.key + '/ord').set(order);
-            });
-
-            this.saveEvent({t: 'request', request: r});
+                    return this.database.ref('requests/' + newRequestRef.key + '/ord').set(order);
+                })
+                .then(() => this.saveEvent({t: 'request', request: r}));
         }
         this.hideNotes();
     }
@@ -250,40 +250,56 @@ class App extends Component {
         familyIdRef.set(newFamilyCar.family, () => {
             const id = familyIdRef.toString().substring(familyIdRef.toString().lastIndexOf('/') + 1);
 
-            this.database.ref('2018/cars/' + newFamilyCar.car)
+            this.database
+                .ref('2018/cars/' + newFamilyCar.car)
                 .set(
                     id,
-                    () => this.setState({...this.state, addingNewCar: false, searchText: '', searchResult: [], toasts: this.state.toasts.concat({text: 'Se ha agregado la nueva familia'})})
-                );
+                    () => this.setState({
+                        ...this.state,
+                        editingFamily: null,
+                        addingNewCar: false,
+                        searchText: '',
+                        searchResult: [],
+                        toasts: this.state.toasts.concat({text: 'Se ha agregado la nueva familia'})
+                    })
+                )
+                .then(() => this.saveEvent({t: 'newCar', newFamilyCar}));
         });
-
-        this.saveEvent({t: 'newCar', newFamilyCar});
     }
 
     changeStatus(request, status) {
         const rk = request.k;
+        const saveE = () => this.saveEvent({t: 'changeStatus', rk, status});
 
         if (status === 'teacherDelivered')
-            this.database.ref('requests/' + rk + '/teacherHidden').set(1);
+            this.database
+                .ref('requests/' + rk + '/teacherHidden')
+                .set(1)
+                .then(saveE);
 
         else if (status === 'requestWhatsApp') {
-            this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
-
-            rp({
-                method: 'POST',
-                uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
-                body: {
-                    requestId: rk,
-                    token: FUNCTIONS_TOKEN
-                },
-                json: true
-            })
-                .catch(err => console.error(err.stack));
+            this.database
+                .ref('requests/' + rk + '/statuses')
+                .push()
+                .set({state: status, uid: this.state.user.uid})
+                .then(() => rp({
+                    method: 'POST',
+                    uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
+                    body: {
+                        requestId: rk,
+                        token: FUNCTIONS_TOKEN
+                    },
+                    json: true
+                }))
+                .catch(err => this.saveEvent({t: 'error', rk, status, error: err.stack}))
+                .then(saveE);
         }
         else
-            this.database.ref('requests/' + rk + '/statuses').push().set({state: status, uid: this.state.user.uid});
-
-        this.saveEvent({t: 'changeStatus', rk, status});
+            this.database
+                .ref('requests/' + rk + '/statuses')
+                .push()
+                .set({state: status, uid: this.state.user.uid})
+                .then(saveE);
     }
 
     renderPlatesSearch() {
@@ -293,7 +309,7 @@ class App extends Component {
                                                        editingFamily={this.state.editingFamily}
                                                        relations={relations}
                                                        onConfirmed={newFamilyCar => this.newCarConfirmed(newFamilyCar)}
-                                                       onCancel={() => this.setState({...this.state, addingNewCar: false, searchText: '', searchResult: []})}/>;
+                                                       onCancel={() => this.setState({...this.state, editingFamily: null, addingNewCar: false, searchText: '', searchResult: []})}/>;
 
         const plates = this.state.searchResult;
         const searchText = this.state.searchText;
