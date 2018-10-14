@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {Avatar, BottomNavigation, Button, Card, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
+import {Avatar, BottomNavigation, Button, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
 import Students from "./components/Students";
 import AdminData from "./components/AdminData";
 import AddNewCar from "./components/AddNewCar";
-import Logo from './logo.png';
+import SignIn from "./components/SignIn";
 import './App.css';
-import './firebaseui.css';
 
 const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
 const firebase = require('firebase/app');
@@ -363,18 +362,6 @@ class App extends Component {
         </div>;
     }
 
-    signIn(type) {
-        const provider = type === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
-
-        firebase.auth().signInWithPopup(provider).then(result => {
-            console.warn('result:');
-            console.warn(result);
-        }).catch(error => {
-            console.warn('error:');
-            console.warn(JSON.parse(JSON.stringify(error)));
-        });
-    }
-
     static loader() {
         return <div style={{
             margin: 0,
@@ -394,41 +381,10 @@ class App extends Component {
         </div>;
     }
 
-    signInScreen() {
-        return <Card style={{width: '70%', marginTop: '20px', padding: '20px'}} className="md-block-centered">
-            <div className="firebaseui-container firebaseui-page-provider-sign-in firebaseui-id-page-provider-sign-in firebaseui-use-spinner">
-                <ul className="firebaseui-idp-list">
-                    <li className="firebaseui-list-item">
-                        <button onClick={() => this.signIn('google')} className="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-google firebaseui-id-idp-button">
-                                <span className="firebaseui-idp-icon-wrapper">
-                                    <img className="firebaseui-idp-icon" alt="Google" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"/>
-                                </span>
-                            <span className="firebaseui-idp-text firebaseui-idp-text-long">Acceder con Google</span>
-                            <span className="firebaseui-idp-text firebaseui-idp-text-short">Google</span>
-                        </button>
-                    </li>
-                    <li className="firebaseui-list-item">
-                        <button onClick={() => this.signIn('facebook')} className="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-facebook firebaseui-id-idp-button">
-                            <span className="firebaseui-idp-icon-wrapper">
-                                <img className="firebaseui-idp-icon" alt="Facebook" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg"/>
-                            </span>
-                            <span className="firebaseui-idp-text firebaseui-idp-text-long">Acceder con Facebook</span>
-                            <span className="firebaseui-idp-text firebaseui-idp-text-short">Facebook</span>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-                <img style={{width: '280px', height: '91px', marginTop: '30px'}} src={Logo} alt="Colegio Pestalozzi"/>
-            </div>
-        </Card>;
-    }
-
     render() {
         if (this.state.initializing) return App.loader();
 
-        if (!this.user) return this.signInScreen();
+        if (!this.user) return <SignIn firebase={firebase}/>;
 
         if (!this.model && !this.state.noAccess) return App.loader();
 
