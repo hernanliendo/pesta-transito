@@ -3,6 +3,9 @@ import {Avatar, BottomNavigation, Button, FontIcon, SelectionControl, Snackbar, 
 import Students from "./components/Students";
 import AdminData from "./components/AdminData";
 import AddNewCar from "./components/AddNewCar";
+import NoAccess from "./components/NoAccess";
+import Loader from "./components/Loader";
+import NoConnection from "./components/NoConnection";
 import SignIn from "./components/SignIn";
 import './App.css';
 
@@ -362,46 +365,18 @@ class App extends Component {
         </div>;
     }
 
-    static loader() {
-        return <div style={{
-            margin: 0,
-            position: 'absolute',
-            top: '46%',
-            fontSize: 40,
-            fontWeight: 600,
-            color: '#555',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
-        }}>
-            <div className="ball-pulse-sync">
-                <div style={{backgroundColor: '#2a55ad'}}/>
-                <div style={{backgroundColor: '#2a55ad'}}/>
-                <div style={{backgroundColor: '#2a55ad'}}/>
-            </div>
-        </div>;
-    }
-
     render() {
-        if (this.state.initializing) return App.loader();
+        if (this.state.initializing) return <Loader/>;
 
         if (!this.user) return <SignIn firebase={firebase}/>;
 
-        if (!this.model && !this.state.noAccess) return App.loader();
+        if (!this.model && !this.state.noAccess) return <Loader/>;
 
-        if (this.state.noAccess) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
-            <FontIcon style={{fontSize: '170px'}}>pan_tool</FontIcon>
+        if (this.state.noAccess) return <NoAccess/>;
 
-            <span className="md-caption md-text-center" style={{fontSize: '26px', margin: '20px'}}>¡Casi listo!</span>
-            <span className="md-caption md-text-center" style={{fontSize: '26px', margin: '20px'}}>Solo falta que solicites acceso a otro voluntario</span>
-        </div>;
+        if (!this.state.connected) return <NoConnection/>;
 
-
-        if (!this.state.connected) return <div style={{display: 'flex', flexDirection: 'column', marginTop: '70px', alignItems: 'center'}}>
-            <FontIcon style={{fontSize: '170px'}}>signal_wifi_off</FontIcon>
-            <span className="md-caption md-text-center" style={{fontSize: '28px'}}>En este momento no tenés conexión a internet</span>
-        </div>;
-
-        if (!this.state.users) return App.loader();
+        if (!this.state.users) return <Loader/>;
 
         return <div>
             <Toolbar
