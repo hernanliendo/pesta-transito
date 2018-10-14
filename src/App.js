@@ -1,15 +1,11 @@
 import React, {Component} from 'react';
 import {Avatar, BottomNavigation, Button, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
+import Loadable from 'react-loadable';
+
 import Students from "./components/Students";
-import AdminData from "./components/AdminData";
-import AddNewCar from "./components/AddNewCar";
-import NoAccess from "./components/NoAccess";
 import Loader from "./components/Loader";
-import NoConnection from "./components/NoConnection";
-import SignIn from "./components/SignIn";
 import './App.css';
 
-const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
 const firebase = require('firebase/app');
 require('firebase/database');
 require('firebase/auth');
@@ -18,7 +14,8 @@ const rp = require('request-promise');
 const _ = require('lodash');
 const wait = require('wait-promise');
 
-const VERSION = '0.50';
+const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
+const VERSION = '0.51';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -27,6 +24,41 @@ const FIREBASE_CONFIG = {
     storageBucket: 'pesta-transito.appspot.com',
     messagingSenderId: '165908723273'
 };
+
+const AdminData = Loadable({
+    loader: () => import('./components/AdminData'),
+    loading() {
+        return <Loader/>;
+    }
+});
+
+const AddNewCar = Loadable({
+    loader: () => import('./components/AddNewCar'),
+    loading() {
+        return <Loader/>;
+    }
+});
+
+const SignIn = Loadable({
+    loader: () => import('./components/SignIn'),
+    loading() {
+        return <Loader/>;
+    }
+});
+
+const NoAccess = Loadable({
+    loader: () => import('./components/NoAccess'),
+    loading() {
+        return <Loader/>;
+    }
+});
+
+const NoConnection = Loadable({
+    loader: () => import('./components/NoConnection'),
+    loading() {
+        return <Loader/>;
+    }
+});
 
 const relations = ['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o'];
 
