@@ -4,7 +4,7 @@ import BottomNavigation from 'react-md/lib/BottomNavigations/BottomNavigation';
 import Button from 'react-md/lib/Buttons/Button';
 import FontIcon from 'react-md/lib/FontIcons/FontIcon';
 import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
-import Snackbar from 'react-md/lib/Snackbars/Snackbar';
+import Snackbar from 'react-md/lib/Snackbars/SnackbarContainer';
 import TextField from 'react-md/lib/TextFields/TextField';
 import Toolbar from 'react-md/lib/Toolbars/Toolbar';
 

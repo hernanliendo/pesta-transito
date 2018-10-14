@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Button from 'react-md/lib/Buttons/Button';
-import Divider from 'react-md/lib/Dividers/Divider';
+import Subheader from 'react-md/lib/Subheaders/Subheader';
 
 // import zipcelx from "zipcelx";
 
@@ -15,6 +15,10 @@ class AdminData extends React.Component {
             this.props.db.ref('2018/families/' + i.familyId).set(null);
             this.props.db.ref('2018/cars/' + carsToDelete[0]).set(null);
         }
+    }
+
+    static title(t) {
+        return <Subheader style={{listStyleType: 'none', fontSize: '22px', marginTop: '60px'}} primary primaryText={t}/>;
     }
 
     onEdit(i) {
@@ -98,19 +102,32 @@ class AdminData extends React.Component {
         this.props.db.ref(`users/${id}/valid`).set(1);
     }
 
-    renderPending(i, idx) {
+    changeSchool(id, user) {
+        const isInicial = user.inicial;
+
+        this.props.db.ref(`users/${id}/inicial`).set(!isInicial);
+    }
+
+    renderUser(i, idx, isPending) {
         return <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
 
-            <div style={{display: 'flex', alignItems: 'center'}} className="md-text ptext-wrap md-font-semibold">{i[1].displayName}</div>
+            <div style={{display: 'flex', alignItems: 'center'}} className="md-text ptext-wrap md-font-semibold">{i[1].displayName + (i[1].inicial ? ' (Jardín)' : ' (Primaria)')}</div>
 
             <div style={{display: 'flex', alignItems: 'flex-end'}}>
+                {isPending &&
                 <Button icon onClick={() => this.approve(i[0])}>thumb_up</Button>
+                }
+
+                {!isPending &&
+                <Button icon onClick={() => this.changeSchool(i[0], i[1])}>autorenew</Button>
+                }
             </div>
         </div>;
     }
 
     render() {
         const m = this.props.model;
+        const activeUsers = _.toPairs(this.props.users).filter(p => p[1].valid);
         const pendingUsers = _.toPairs(this.props.users).filter(p => !p[1].valid);
         const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 
@@ -121,11 +138,16 @@ class AdminData extends React.Component {
 
             <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '5px'}}>
 
-                {pendingUsers.map((itm, idx) => this.renderPending(itm, idx))}
+                {pendingUsers.length > 0 && AdminData.title('Autorizaciones Pendientes')}
+                {pendingUsers.map((itm, idx) => this.renderUser(itm, idx, true))}
 
+
+                {AdminData.title('Voluntarios')}
+                {activeUsers.map((itm, idx) => this.renderUser(itm, idx, false))}
+
+
+                {AdminData.title('Familias')}
                 {items.map((itm, idx) => this.renderItem(itm, idx))}
-
-                {pendingUsers.length > 0 && <Divider/>}
 
                 <div style={{marginBottom: '50px'}}>&nbsp;</div>
 

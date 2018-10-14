@@ -30,6 +30,10 @@
           ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
           ".write": "auth !== null && root.child('admins/' + auth.uid).exists()"
         },
+        "inicial": {
+          ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
+          ".write": "auth !== null && root.child('admins/' + auth.uid).exists()"
+        },
         "displayName": {
           ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
           ".write": "auth !== null && auth.uid === $user_id"
