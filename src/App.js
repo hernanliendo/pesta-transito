@@ -1,8 +1,14 @@
-import React, {Component} from 'react';
-import {BottomNavigation, Button, FontIcon, SelectionControl, Snackbar, TextField, Toolbar} from 'react-md';
+import React from 'react';
+import BottomNavigation from 'react-md/lib/BottomNavigations/BottomNavigation';
+import Button from 'react-md/lib/Buttons/Button';
+import FontIcon from 'react-md/lib/FontIcons/FontIcon';
+import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
+import Snackbar from 'react-md/lib/Snackbars/Snackbar';
+import TextField from 'react-md/lib/TextFields/TextField';
+import Toolbar from 'react-md/lib/Toolbars/Toolbar';
+
 import Loadable from 'react-loadable';
 
-import Students from "./components/Students";
 import Loader from "./components/Loader";
 import './App.css';
 
@@ -26,6 +32,13 @@ const FIREBASE_CONFIG = {
 
 const AdminData = Loadable({
     loader: () => import('./components/AdminData'),
+    loading() {
+        return <Loader/>;
+    }
+});
+
+const Students = Loadable({
+    loader: () => import('./components/Students'),
     loading() {
         return <Loader/>;
     }
@@ -61,7 +74,7 @@ const NoConnection = Loadable({
 
 const relations = ['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o'];
 
-class App extends Component {
+class App extends React.Component {
 
     constructor(props) {
         super(props);
