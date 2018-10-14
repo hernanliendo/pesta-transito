@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Button, SelectField, Subheader, TextField} from 'react-md';
+import Button from 'react-md/lib/Buttons/Button';
+import SelectField from 'react-md/lib/SelectFields/SelectField';
+import Subheader from 'react-md/lib/Subheaders/Subheader';
+import TextField from 'react-md/lib/TextFields/TextField';
 
 const wait = require('wait-promise');
 const _ = require('lodash');

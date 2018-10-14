@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Card} from "react-md";
+import Card from 'react-md/lib/Cards/Card';
+
 import Logo from "../logo.png";
 
 import '../firebaseui.css';

@@ -1,10 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Avatar, Button, Divider, FontIcon, SVGIcon} from 'react-md';
+import Avatar from 'react-md/lib/Avatars/Avatar';
+import Button from 'react-md/lib/Buttons/Button';
+import Divider from 'react-md/lib/Dividers/Divider';
+import FontIcon from 'react-md/lib/FontIcons/FontIcon';
+import SVGIcon from 'react-md/lib/SVGIcons/SVGIcon';
+
 import Logo from "../logo.png";
 
 const _ = require('lodash');
 const wait = require('wait-promise');
+
 const WhatsAppIcon = () => (
     <SVGIcon viewBox="0 0 448 512" style={{fill: 'white', height: '18px', width: '18px'}}>
         <path

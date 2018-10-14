@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Button, Divider} from "react-md";
+import Button from 'react-md/lib/Buttons/Button';
+import Divider from 'react-md/lib/Dividers/Divider';
+
 // import zipcelx from "zipcelx";
 
 const _ = require('lodash');

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import BottomNavigation from 'react-md/lib/BottomNavigations/BottomNavigation';
 import Button from 'react-md/lib/Buttons/Button';
 import FontIcon from 'react-md/lib/FontIcons/FontIcon';
@@ -16,11 +17,10 @@ const firebase = require('firebase/app');
 require('firebase/database');
 require('firebase/auth');
 
-const rp = require('request-promise');
 const _ = require('lodash');
 
 const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
-const VERSION = '0.51';
+const VERSION = '0.52';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -118,17 +118,19 @@ class App extends React.Component {
             displayName: _.get(this, 'user.displayName', '')
         };
 
-        rp({
+        fetch('https://us-central1-pesta-transito.cloudfunctions.net/log_event', {
             method: 'POST',
-            uri: 'https://us-central1-pesta-transito.cloudfunctions.net/log_event',
-            body: {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 token: FUNCTIONS_TOKEN,
                 t: evt['t'] || 'log',
                 e: _.get(this, 'user.email', ''),
                 uid: _.get(this, 'user.uid', ''),
                 params
-            },
-            json: true
+            })
         }).then();
     }
 
@@ -288,14 +290,16 @@ class App extends React.Component {
                 .ref('requests/' + rk + '/statuses')
                 .push()
                 .set({state: status, uid: this.state.user.uid})
-                .then(() => rp({
+                .then(() => fetch('https://us-central1-pesta-transito.cloudfunctions.net/notify_parent', {
                     method: 'POST',
-                    uri: 'https://us-central1-pesta-transito.cloudfunctions.net/notify_parent',
-                    body: {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
                         requestId: rk,
                         token: FUNCTIONS_TOKEN
-                    },
-                    json: true
+                    })
                 }))
                 .catch(err => this.saveEvent({t: 'error', rk, status, error: err.stack}))
                 .then(saveE);

@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Avatar, Button, FontIcon, TextField} from 'react-md';
+import Avatar from 'react-md/lib/Avatars/Avatar';
+import Button from 'react-md/lib/Buttons/Button';
+import FontIcon from 'react-md/lib/FontIcons/FontIcon';
+import TextField from 'react-md/lib/TextFields/TextField';
 
 import AddNewCar from "./AddNewCar";
 
