@@ -20,7 +20,7 @@ require('firebase/auth');
 const _ = require('lodash');
 
 const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
-const VERSION = '0.52';
+const VERSION = '0.53';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -144,10 +144,10 @@ class App extends React.Component {
         firebase.auth().languageCode = 'es';
         this.database = firebase.database();
 
-        this.saveEvent({v: 'after f.db'});
+        // this.saveEvent({v: 'after f.db'});
 
         firebase.auth().onAuthStateChanged(user => {
-            this.saveEvent({v: 'onAuthStateChanged', user: (user ? user.uid : 'noid')});
+            // this.saveEvent({v: 'onAuthStateChanged', user: (user ? user.uid : 'noid')});
 
             if (!user)
                 this.setState({...this.state, initializing: false});
@@ -168,7 +168,7 @@ class App extends React.Component {
         this.database.ref('2018').on('value', snapshot => {
             this.model = snapshot.val();
             this.forceUpdate();
-            this.saveEvent({v: 'got model'});
+            // this.saveEvent({v: 'got model'});
 
         }, () => this.setState({...this.state, noAccess: true}));
 
@@ -187,7 +187,7 @@ class App extends React.Component {
         this.database.ref('.info/connected').on('value', snap => {
             const conn = snap.val();
             this.setState({...this.state, connected: conn});
-            this.saveEvent({v: 'got model' + conn});
+            // this.saveEvent({v: 'got model' + conn});
         });
     }
 
