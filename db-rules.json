@@ -30,7 +30,7 @@
           ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
           ".write": "auth !== null && root.child('admins/' + auth.uid).exists()"
         },
-        "inicial": {
+        "nivel": {
           ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
           ".write": "auth !== null && root.child('admins/' + auth.uid).exists()"
         },

@@ -103,15 +103,22 @@ class AdminData extends React.Component {
     }
 
     changeSchool(id, user) {
-        const isInicial = user.inicial;
+        let r = 'Primaria';
 
-        this.props.db.ref(`users/${id}/inicial`).set(!isInicial);
+        if (!user.nivel || user.nivel === 'Primaria')
+            r = 'Jardín';
+        else if (user.nivel === 'Jardín')
+            r = 'Primaria y Jardín';
+        else if (user.nivel === 'Primaria y Jardín')
+            r = 'Primaria';
+
+        this.props.db.ref(`users/${id}/nivel`).set(r);
     }
 
     renderUser(i, idx, isPending) {
         return <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
 
-            <div style={{display: 'flex', alignItems: 'center'}} className="md-text ptext-wrap md-font-semibold">{i[1].displayName + (i[1].inicial ? ' (Jardín)' : ' (Primaria)')}</div>
+            <div style={{display: 'flex', alignItems: 'center'}} className="md-text ptext-wrap md-font-semibold">{i[1].displayName + ' (' + (i[1].nivel || 'Primaria') + ')'}</div>
 
             <div style={{display: 'flex', alignItems: 'flex-end'}}>
                 {isPending &&
