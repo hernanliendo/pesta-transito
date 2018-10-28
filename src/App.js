@@ -9,6 +9,7 @@ import TextField from 'react-md/lib/TextFields/TextField';
 import Toolbar from 'react-md/lib/Toolbars/Toolbar';
 
 import Loadable from 'react-loadable';
+import {version} from '../package.json'
 
 import Loader from "./components/Loader";
 import './App.css';
@@ -20,7 +21,7 @@ require('firebase/auth');
 const _ = require('lodash');
 
 const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
-const VERSION = '0.55';
+const VERSION = version;
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
@@ -211,6 +212,15 @@ class App extends React.Component {
             .then(() => this.saveEvent({t: 'delivered', request}));
     }
 
+    onRemoved(rk) {
+        const request = this.state.requests.filter(r => r.k === rk)[0];
+
+        this.database
+            .ref('requests/' + rk)
+            .set(null, () => this.showMessage('Se ha eliminado el pedido de ' + request.plate))
+            .then(() => this.saveEvent({t: 'removed', request}));
+    }
+
     showMessage(msg) {
         this.setState({...this.state, toasts: this.state.toasts.concat({text: msg})});
     }
@@ -361,6 +371,7 @@ class App extends React.Component {
                 isTeacher={this.state.isTeacher}
                 currentUser={this.state.user}
                 onDelivered={rk => this.onDelivered(rk)}
+                onRemoved={rk => this.onRemoved(rk)}
                 onChangeStatus={(request, status) => this.changeStatus(request, status)}
             />
             }

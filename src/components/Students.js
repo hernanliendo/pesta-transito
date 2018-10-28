@@ -131,6 +131,10 @@ class Students extends React.Component {
                         {_.has(r, 'family.wsapp0') &&
                         <Button style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r, 'requestWhatsApp')}>A DARSENA</Button>
                         }
+
+                        {r.jardin &&
+                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onRemoved(r.k)}>ELIMINAR</Button>
+                        }
                     </div>
                     }
 
@@ -196,6 +200,7 @@ Students.propTypes = {
     currentUser: PropTypes.object.isRequired,
     isTeacher: PropTypes.bool,
     onDelivered: PropTypes.func.isRequired,
+    onRemoved: PropTypes.func.isRequired,
     onChangeView: PropTypes.func.isRequired,
     viewJardin: PropTypes.bool.isRequired,
     onChangeStatus: PropTypes.func.isRequired
