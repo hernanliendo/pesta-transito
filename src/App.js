@@ -93,6 +93,8 @@ class App extends React.Component {
             isJardinFamilyAdmin: false,
             isTeacher: false,
 
+            viewJardin: false,
+
             editingFamily: null,
 
             toasts: [],
@@ -179,7 +181,11 @@ class App extends React.Component {
             this.setState({...this.state, requests: !items ? [] : _.toPairs(items).filter(p => p[1].family).map(i => ({...i[1], k: i[0]}))});
         });
 
-        this.database.ref('users').on('value', snapshot => this.setState({...this.state, users: snapshot.val()}));
+        this.database.ref('users').on('value', snapshot => {
+            const users = snapshot.val();
+
+            this.setState({...this.state, users, viewJardin: users[this.user.uid].nivel === 'Jardín'});
+        });
 
         this.database.ref('admins').on('value', snapshot => {
             const type = snapshot.val()[this.user.uid];
@@ -348,6 +354,8 @@ class App extends React.Component {
             <Students
                 requests={this.state.requests}
                 users={this.state.users}
+                viewJardin={this.state.viewJardin}
+                onChangeView={viewJardin => this.setState({...this.state, viewJardin})}
                 isTeacher={this.state.isTeacher}
                 currentUser={this.state.user}
                 onDelivered={rk => this.onDelivered(rk)}

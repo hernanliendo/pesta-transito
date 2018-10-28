@@ -5,6 +5,7 @@ import Button from 'react-md/lib/Buttons/Button';
 import Divider from 'react-md/lib/Dividers/Divider';
 import FontIcon from 'react-md/lib/FontIcons/FontIcon';
 import SVGIcon from 'react-md/lib/SVGIcons/SVGIcon';
+import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
 
 import Logo from "../logo.png";
 
@@ -154,6 +155,15 @@ class Students extends React.Component {
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
+                <SelectionControl
+                    id="jardinPrimaria"
+                    onChange={v => this.props.onChangeView(v)}
+                    type="switch"
+                    label="Jardín"
+                    checked={this.props.viewJardin}
+                    name="jardinPrimaria"
+                />
+
                 {this.state.previousRequests.length === 0 &&
                 <div>
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -181,6 +191,8 @@ Students.propTypes = {
     currentUser: PropTypes.object.isRequired,
     isTeacher: PropTypes.bool,
     onDelivered: PropTypes.func.isRequired,
+    onChangeView: PropTypes.func.isRequired,
+    viewJardin: PropTypes.bool.isRequired,
     onChangeStatus: PropTypes.func.isRequired
 };
 export default Students;
