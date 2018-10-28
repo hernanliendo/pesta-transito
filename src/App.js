@@ -20,7 +20,7 @@ require('firebase/auth');
 const _ = require('lodash');
 
 const FUNCTIONS_TOKEN = 'JKL93uJFJ939VBN5451J4K8gkjhshj89n';
-const VERSION = '0.54';
+const VERSION = '0.55';
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyA_0_hHLyMU-42F-nR0XdQnJsdDpO9aNVA',
     authDomain: 'pesta-transito.firebaseapp.com',
