@@ -61,7 +61,11 @@ class Students extends React.Component {
         return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + s[1].toUpperCase().trim() + ')';
     }
 
-    renderRequest(r, ridx) {
+    renderRequest(r, ridx, jardin) {
+        const requestJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
+
+        if (requestJardin && !jardin) return <div key={ridx}/>;
+
         const lastStatus = _.last(_.toPairs(r.statuses || {}));
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
@@ -89,7 +93,6 @@ class Students extends React.Component {
             color = null;
 
         if (this.props.isTeacher && (!isPendingRequest || teacherHidden)) return <div key={ridx}/>;
-
 
         return <div key={ridx}>
             <div style={{
@@ -123,7 +126,9 @@ class Students extends React.Component {
 
                     {(!this.props.isTeacher && isPendingRequest) &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                        {!requestJardin &&
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>
+                        }
 
                         {_.has(r, 'family.wsapp0') &&
                         <Button style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r, 'requestWhatsApp')}>A DARSENA</Button>
@@ -151,6 +156,8 @@ class Students extends React.Component {
     }
 
     render() {
+        const jardin = this.props.viewJardin;
+
         return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -160,7 +167,7 @@ class Students extends React.Component {
                     onChange={v => this.props.onChangeView(v)}
                     type="switch"
                     label="Jardín"
-                    checked={this.props.viewJardin}
+                    checked={jardin}
                     name="jardinPrimaria"
                 />
 
@@ -177,7 +184,7 @@ class Students extends React.Component {
                 </div>
                 }
 
-                {this.state.previousRequests.map((r, ridx) => this.renderRequest(r, ridx))}
+                {this.state.previousRequests.map((r, ridx) => this.renderRequest(r, ridx, jardin))}
 
                 <div style={{marginBottom: '30px'}}>&nbsp;</div>
             </div>
