@@ -62,9 +62,7 @@ class Students extends React.Component {
     }
 
     renderRequest(r, ridx, jardin) {
-        const requestJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
-
-        if (requestJardin && !jardin) return <div key={ridx}/>;
+        if (r.jardin && !jardin) return <div key={ridx}/>;
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}));
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
@@ -126,7 +124,7 @@ class Students extends React.Component {
 
                     {(!this.props.isTeacher && isPendingRequest) &&
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        {!requestJardin &&
+                        {!r.jardin &&
                         <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>
                         }
 

@@ -53,7 +53,7 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
     return db.ref('requests/' + req.body.requestId).once('value')
         .then(snapshot => {
             const carRequest = snapshot.val();
-            const dropLocation = 'Dársena Rápida';
+            const dropLocation = _.get(req, 'body.request.jardin', false) ? 'Dársena de Jardín' : 'Dársena Rápida';
 
             const driverName = _.join(
                 _.toPairs(
