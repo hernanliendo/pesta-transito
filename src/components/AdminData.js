@@ -134,7 +134,7 @@ class AdminData extends React.Component {
 
     render() {
         const m = this.props.model;
-        const activeUsers = _.toPairs(this.props.users).filter(p => p[1].valid);
+        const activeUsers = _.sortBy(_.toPairs(this.props.users).filter(p => p[1].valid), p => p[1].displayName);
         const pendingUsers = _.toPairs(this.props.users).filter(p => !p[1].valid);
         const items = _.sortBy(_.toPairs(this.props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), ['n']);
 

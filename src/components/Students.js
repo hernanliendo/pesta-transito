@@ -62,7 +62,7 @@ class Students extends React.Component {
     }
 
     renderRequest(r, ridx, jardin) {
-        if (r.jardin && !jardin) return <div key={ridx}/>;
+        if ((r.jardin && !jardin) || (!r.jardin && jardin)) return <div key={ridx}/>;
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}));
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
