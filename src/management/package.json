@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "firebase-admin": "^6.0.0",
+    "firebase-admin": "^6.1.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.2"
   }
