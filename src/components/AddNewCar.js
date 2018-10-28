@@ -162,7 +162,7 @@ class AddNewCar extends React.Component {
                 onChange={v => this.inputChanged(v, 'grade_' + id)}
                 value={this.state['grade_' + id]}
                 className="md-cell"
-                menuItems={GRADES}
+                menuItems={this.getGrades()}
                 simplifiedMenu={true}
             />
 
@@ -177,6 +177,10 @@ class AddNewCar extends React.Component {
                 simplifiedMenu={true}
             />
         </div>;
+    }
+
+    getGrades() {
+        return GRADES.filter(g => !(g.indexOf('Sala') !== -1 && !this.props.isJardinFamilyAdmin));
     }
 
     plateChanged(t) {
@@ -326,6 +330,7 @@ class AddNewCar extends React.Component {
 AddNewCar.propTypes = {
     previousPlate: PropTypes.string,
     onCancel: PropTypes.func.isRequired,
+    isJardinFamilyAdmin: PropTypes.bool,
     relations: PropTypes.array.isRequired,
     onConfirmed: PropTypes.func.isRequired,
     showMessage: PropTypes.func.isRequired,

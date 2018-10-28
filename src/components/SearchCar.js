@@ -57,6 +57,7 @@ class SearchCar extends React.Component {
         if (this.props.state.addingNewCar) return <AddNewCar previousPlate={this.props.state.searchText}
                                                              showMessage={m => this.props.showMessage(m)}
                                                              model={this.props.model}
+                                                             isJardinFamilyAdmin={this.props.isJardinFamilyAdmin}
                                                              editingFamily={this.props.state.editingFamily}
                                                              relations={this.props.relations}
                                                              onConfirmed={newFamilyCar => this.props.newCarConfirmed(newFamilyCar)}
@@ -120,6 +121,7 @@ SearchCar.propTypes = {
     relations: PropTypes.array.isRequired,
     showMessage: PropTypes.func.isRequired,
     newCarConfirmed: PropTypes.func.isRequired,
+    isJardinFamilyAdmin: PropTypes.bool,
     model: PropTypes.object,
     setState: PropTypes.func.isRequired
 };

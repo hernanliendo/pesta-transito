@@ -90,6 +90,7 @@ class App extends React.Component {
             user: {},
 
             isAdmin: false,
+            isJardinFamilyAdmin: false,
             isTeacher: false,
 
             editingFamily: null,
@@ -180,7 +181,11 @@ class App extends React.Component {
 
         this.database.ref('users').on('value', snapshot => this.setState({...this.state, users: snapshot.val()}));
 
-        this.database.ref('admins').on('value', snapshot => this.setState({...this.state, isAdmin: snapshot.val()[this.user.uid]}));
+        this.database.ref('admins').on('value', snapshot => {
+            const type = snapshot.val()[this.user.uid];
+
+            this.setState({...this.state, isAdmin: type === 1 || type === 2, isJardinFamilyAdmin: type === 2})
+        });
 
         this.database.ref('teachers').on('value', snapshot => this.setState({...this.state, isTeacher: !!snapshot.val()[this.user.uid]}));
 
@@ -356,6 +361,7 @@ class App extends React.Component {
                 model={this.model}
                 relations={relations}
                 state={this.state}
+                isJardinFamilyAdmin={this.state.isJardinFamilyAdmin}
                 setState={s => this.setState(s)}
             />}
 
