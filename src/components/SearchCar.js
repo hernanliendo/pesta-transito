@@ -36,7 +36,7 @@ class SearchCar extends React.Component {
         return <div onClick={() => this.props.setState({...this.props.state, addingNotes: {plate, family}, searchText: '', searchResult: []})}
                     key={ridx} style={{display: 'flex', marginBottom: '25px', minHeight: '100px', alignItems: 'center', justifyContent: 'center'}}>
             <div style={{marginRight: '10px', minWidth: '40px'}}>
-                <Avatar icon={<FontIcon>directions_car</FontIcon>}/>
+                <Avatar icon={<FontIcon style={{marginTop: '-4px', marginLeft: '1px'}}>directions_car</FontIcon>}/>
             </div>
 
             <div style={{marginRight: '10px', width: 'calc(100vw - 225px)', maxHeight: '100px'}}>
@@ -68,6 +68,7 @@ class SearchCar extends React.Component {
 
         return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{marginTop: '4px', display: 'flex', flexDirection: 'column'}}>
 
+            {!this.props.state.addingNotes &&
             <div style={{display: 'flex', alignItems: 'flex-end', marginTop: '-9px'}}>
                 <TextField
                     id="patente"
@@ -85,6 +86,7 @@ class SearchCar extends React.Component {
                 <Button onClick={() => this.clearText()} style={{marginBottom: '10px', marginLeft: '-50px'}} icon iconChildren={<FontIcon>clear</FontIcon>}/>
                 }
             </div>
+            }
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
                 {
@@ -98,8 +100,9 @@ class SearchCar extends React.Component {
 
                 {plates.map((p, ridx) => this.renderResults(p, ridx))}
 
+                {!this.props.state.addingNotes &&
                 <div style={{marginBottom: '50px'}}>&nbsp;</div>
-
+                }
             </div>
 
             {(plates.length === 0 && this.props.state.searchText.length === 0 && !this.props.state.addingNotes) &&
