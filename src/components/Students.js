@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Avatar from 'react-md/lib/Avatars/Avatar';
 import Button from 'react-md/lib/Buttons/Button';
-import Divider from 'react-md/lib/Dividers/Divider';
+// import Divider from 'react-md/lib/Dividers/Divider';
 import FontIcon from 'react-md/lib/FontIcons/FontIcon';
 import SVGIcon from 'react-md/lib/SVGIcons/SVGIcon';
 import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
@@ -58,7 +58,7 @@ class Students extends React.Component {
         if (studentName.indexOf(familyName) === -1)
             studentName += ' ' + familyName;
 
-        return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + s[1].toUpperCase().trim() + ')';
+        return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ');// + ' (' + s[1].toUpperCase().trim() + ')';
     }
 
     renderRequest(r, ridx, jardin) {
@@ -71,8 +71,10 @@ class Students extends React.Component {
 
         if ('pending' === lastState)
             onCharge = 'Esperando';
+
         else if ('parentReplied' === lastState)
             onCharge = `Conductor dijo: ${lastStatus[1].resp}`;
+
         else if ('requestWhatsApp' === lastState)
             onCharge = 'Esperá confirmación del conductor';
 
@@ -83,77 +85,72 @@ class Students extends React.Component {
 
         if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid && 'pending' !== lastState) {
             color = '#FFEB3B';
-            plateFontSize = '24px';
-        }
-        else if ('pending' !== lastState)
+            // plateFontSize = '24px';
+        } else if ('pending' !== lastState)
             color = 'rgba(0, 0, 0, 0.1)';
         else
             color = null;
 
         if (this.props.isTeacher && (!isPendingRequest || teacherHidden)) return <div key={ridx}/>;
 
-        return <div key={ridx}>
-            <div style={{
-                display: 'flex', minHeight: '140px', alignItems: 'center', backgroundColor: color, justifyContent: 'center',
-                animation: ridx === animationOnItem ? 'removing-item 1s' : null
-            }}>
-                <div style={{marginRight: '10px'}}>
-                    <Avatar icon={<FontIcon>face</FontIcon>}/>
-                    <Avatar style={{height: '27px', width: '27px', marginLeft: '-10px'}} contentStyle={{fontSize: '17px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
-                </div>
+        return <div key={ridx} style={{
+            display: 'flex', minHeight: '140px', alignItems: 'center', backgroundColor: color, justifyContent: 'space-around',
+            animation: ridx === animationOnItem ? 'removing-item 1s' : null
+        }}>
 
-                <div style={{display: 'flex', flexDirection: 'column', marginRight: '10px', width: 'calc(100vw - 225px)'}}>
-
-                    {_.toPairs(r.family.ks).filter((p, pidx) => !r.unrequested || !r.unrequested[pidx]).map(p =>
-                        <div key={p[0]} className="text-height md-text md-font-semibold ptext-wrap">{this.studentString(r, p)}</div>)}
-
-                    {r.notes && <div style={{color: '#D32F2F'}} className="text-height md-text md-font-bold ptext-wrap">{r.notes}</div>}
-
-                    <div style={{fontSize: plateFontSize}} className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
-
-                    <div className="text-height md-caption ptext-wrap">{onCharge}</div>
-                </div>
-
-                <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
-
-                    {(this.props.isTeacher && isPendingRequest) &&
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'teacherDelivered')}>ENTREGADO</Button>
-                    </div>
-                    }
-
-                    {(!this.props.isTeacher && isPendingRequest) &&
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        {!r.jardin &&
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>
-                        }
-
-                        {_.has(r, 'family.wsapp0') &&
-                        <Button style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r, 'requestWhatsApp')}>A DARSENA</Button>
-                        }
-
-                        {r.jardin &&
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onRemoved(r.k)}>ELIMINAR</Button>
-                        }
-                    </div>
-                    }
-
-                    {('transit' === lastState || 'parentReplied' === lastState) &&
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>
-                        <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
-                    </div>
-                    }
-
-                    {'requestWhatsApp' === lastState &&
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                        <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
-                    </div>
-                    }
-                </div>
+            <div style={{display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
+                <Avatar style={{height: '40px', width: '40px'}} contentStyle={{fontSize: '22px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
             </div>
 
-            <Divider/>
+            <div style={{display: 'flex', flexDirection: 'column', width: 'calc(100% - 232px)'}}>
+
+                <div style={{fontSize: plateFontSize}} className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
+
+                {_.toPairs(r.family.ks).filter((p, pidx) => !r.unrequested || !r.unrequested[pidx]).map(p =>
+                    <div key={p[0]} className="text-height md-text ptext-wrap">{this.studentString(r, p)}</div>)}
+
+                {r.notes && <div style={{color: '#D32F2F'}} className="text-height md-text md-font-bold ptext-wrap">{r.notes}</div>}
+
+                <div className="text-height md-caption ptext-wrap">{onCharge}</div>
+            </div>
+
+            <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
+
+                {(this.props.isTeacher && isPendingRequest) &&
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'teacherDelivered')}>ENTREGADO</Button>
+                </div>
+                }
+
+                {(!this.props.isTeacher && isPendingRequest) &&
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                    {!r.jardin &&
+                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>
+                    }
+
+                    {_.has(r, 'family.wsapp0') &&
+                    <Button style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r, 'requestWhatsApp')}>A DARSENA</Button>
+                    }
+
+                    {r.jardin &&
+                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onRemoved(r.k)}>ELIMINAR</Button>
+                    }
+                </div>
+                }
+
+                {('transit' === lastState || 'parentReplied' === lastState) &&
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>
+                    <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
+                </div>
+                }
+
+                {'requestWhatsApp' === lastState &&
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                    <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
+                </div>
+                }
+            </div>
         </div>;
     }
 

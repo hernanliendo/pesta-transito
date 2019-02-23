@@ -360,7 +360,7 @@ class App extends React.Component {
                 </div>}
             />
 
-            <div style={{marginBottom: '5px'}}>&nbsp;</div>
+            <div style={{marginBottom: '3px'}}>&nbsp;</div>
 
             {(!this.state.addingNotes && this.state.tabIndex === 0) &&
             <Students
