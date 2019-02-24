@@ -22,6 +22,23 @@ const checkAuth = req => {
     if (req.body.token !== 'JKL93uJFJ939VBN5451J4K8gkjhshj89n') throw new Error(`Invalid token [${req.body.token}]`);
 };
 
+exports.daily_reset_pending_requests = functions.https.onRequest((req, res) => {
+    return db.ref('requests').once('value')
+        .then(snapshot => {
+            const requests = snapshot.val();
+
+            return !requests ?
+                new Promise(() => {
+                }) :
+                Promise.all(_.toPairs(requests)
+                    .map(reqPair => db.ref('requests/' + reqPair[0]).remove()));
+
+        }, error => {
+            throw error;
+        })
+        .then(() => res.status(200).send('ok'));
+});
+
 exports.log_event = functions.https.onRequest((req, res) => {
     setCors(req, res);
 
