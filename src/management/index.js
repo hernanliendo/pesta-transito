@@ -98,15 +98,17 @@ const change = old => {
 };
 
 const changeRemote = async (input) => {
-    await _.toPairs(input).forEach(async p => {
+    for (const p of _.toPairs(input)) {
         const vRef = db.ref(p[0]);
-        console.log('p[1]', p[1]);
+        console.log(p[0]);
+
         vRef.set(p[1]);
+
         await wait.sleep(5000);
-    });
+    }
 };
 
-const getFamilies = () => db.ref('2018').on('value', snapshot => {
+const getFamilies = () => db.ref('2018').once('value', snapshot => {
     const model = snapshot.val();
     let all = {};
 
@@ -118,8 +120,9 @@ const getFamilies = () => db.ref('2018').on('value', snapshot => {
             all['2018/families/' + familyPair[0] + '/ks/' + kidPair[0]] = change(grado);
         });
     });
-    changeRemote().then();
-    console.info(all);
+    changeRemote(all).then();
+    console.log('done');
+    // console.info(all);
 });
 
 const getVoluntarios = () => db.ref('events').on('value', snapshot => {
