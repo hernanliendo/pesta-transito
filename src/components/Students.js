@@ -58,7 +58,7 @@ class Students extends React.Component {
         if (studentName.indexOf(familyName) === -1)
             studentName += ' ' + familyName;
 
-        return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ');// + ' (' + s[1].toUpperCase().trim() + ')';
+        return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + _.split(s[1], '_')[0].trim() + ')';// + ' (' + s[1].toUpperCase().trim() + ')';
     }
 
     renderRequest(r, ridx, jardin) {
