@@ -5,9 +5,8 @@ import Button from 'react-md/lib/Buttons/Button';
 // import Divider from 'react-md/lib/Dividers/Divider';
 import FontIcon from 'react-md/lib/FontIcons/FontIcon';
 import SVGIcon from 'react-md/lib/SVGIcons/SVGIcon';
-import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
-
 import Logo from "../logo.png";
+// import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
 
 const _ = require('lodash');
 const wait = require('wait-promise');
@@ -99,7 +98,7 @@ class Students extends React.Component {
         }}>
 
             <div style={{display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
-                <Avatar style={{height: '40px', width: '40px'}} contentStyle={{fontSize: '22px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
+                <Avatar style={{height: '40px', width: '40px'}} contentStyle={{fontSize: '22px'}} suffix={Avatar.defaultProps.suffixes[ridx + 1]} random>{ridx + 1}</Avatar>
             </div>
 
             <div style={{display: 'flex', flexDirection: 'column', width: 'calc(100% - 232px)'}}>
@@ -161,6 +160,7 @@ class Students extends React.Component {
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
+                { /*
                 <SelectionControl
                     id="jardinPrimaria"
                     onChange={v => this.props.onChangeView(v)}
@@ -169,6 +169,7 @@ class Students extends React.Component {
                     checked={jardin}
                     name="jardinPrimaria"
                 />
+                */}
 
                 {this.state.previousRequests.length === 0 &&
                 <div>
