@@ -245,7 +245,7 @@ class AddNewCar extends React.Component {
     static resolveWhatsApp(id, data) {
         const r = _.get(data, id, null);
 
-        if (r && !r.startsWith('5411')) return '5411' + r;
+        // if (r && !r.startsWith('5411')) return '5411' + r;
 
         return r;
     }
