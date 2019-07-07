@@ -157,6 +157,11 @@ class Students extends React.Component {
                     <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
                 </div>
                 }
+
+                <span style={{display: 'flex', justifyContent: 'flex-end', marginTop: '5px'}}>
+                    <FontIcon style={{color: '#55c5f5', marginRight: '-15px', zIndex: '2'}}>done</FontIcon>
+                    <FontIcon style={{color: '#878787', zIndex: '0'}}>done</FontIcon>
+                </span>
             </div>
         </div>;
     }
