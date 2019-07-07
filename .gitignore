@@ -35,3 +35,5 @@ yarn-error.log*
 src/**/*.css
 build/sumate/index.html
 temp/
+
+whatsapp/firebase-debug.log
