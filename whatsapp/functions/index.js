@@ -109,7 +109,7 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
         }, error => {
             throw error;
         })
-        .then(() => res.status(200).send('ok'));
+        .then(apiResult => res.status(200).json(apiResult));
 });
 
 exports.parent_replied = functions.https.onRequest((req, res) => {

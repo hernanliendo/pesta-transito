@@ -1,17 +1,18 @@
 {
   "name": "pesta-transito",
   "homepage": "https://pesta-transito.firebaseapp.com",
-  "version": "1.1.71",
+  "version": "1.1.72",
   "private": true,
   "dependencies": {
     "firebase": "^6.2.4",
+    "firebase-functions": "^3.0.2",
     "lodash": "^4.17.11",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
     "react-loadable": "^5.5.0",
     "react-md": "^1.12.1",
+    "react-scripts": "3.0.1",
     "wait-promise": "^0.4.1"
   },
   "devDependencies": {
