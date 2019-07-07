@@ -4,7 +4,8 @@ const _ = require('lodash');
 const rp = require('request-promise');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const bigquery = require('@google-cloud/bigquery')();
+const {BigQuery} = require('@google-cloud/bigquery');
+const bigquery = new BigQuery({projectId: 'pesta-transito'});
 
 admin.initializeApp();
 
@@ -109,7 +110,47 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
         }, error => {
             throw error;
         })
-        .then(apiResult => res.status(200).json(apiResult));
+        .then(apiResult => {
+            apiResult.forEach(aResult => db.ref('wapps/' + aResult.id).set(req.body.requestId));
+
+            return new Promise(r => r());
+        })
+        .then(() => res.status(200).send('ok'));
+});
+
+exports.wapp_status_notification = functions.https.onRequest((req, res) => {
+    setCors(req, res);
+
+    if (req.method === 'OPTIONS') return res.status(200).send('');
+
+    const txId = _.get(req, 'body.INTENT_TX_ID', '');
+    const status = _.get(req, 'body.STATUS', '');
+
+    if (status === 'read' || status === 'delivered') {
+        return db.ref('wapps/' + txId).once('value')
+            .then(snapshot => {
+
+                const requestsIds = _.uniq(_.toPairs(snapshot.val()).map(p => p[1]));
+
+                if (requestsIds && requestsIds.length > 0) {
+                    return db
+                        .ref('requests/' + requestsIds[0] + '/statuses')
+                        .push()
+                        .set({state: 'wappStatus', status, uid: 'system'})
+                } else
+                    return new Promise(e => e());
+
+            }, error => {
+                throw error;
+            })
+            .then(() => res.status(200).send(''))
+            .catch(err => {
+                console.error(err, err.stack);
+                throw err;
+            });
+    } else {
+        return new Promise(() => res.status(200).send(''));
+    }
 });
 
 exports.parent_replied = functions.https.onRequest((req, res) => {
