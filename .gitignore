@@ -33,5 +33,5 @@ yarn-error.log*
 *.iml
 
 src/**/*.css
-build/index.html
+build/sumate/index.html
 temp/
