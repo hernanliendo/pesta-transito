@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import PropTypes from "prop-types";
 import Button from 'react-md/lib/Buttons/Button';
 import Subheader from 'react-md/lib/Subheaders/Subheader';
+import TextField from "react-md/lib/TextFields";
+import FontIcon from "react-md/lib/FontIcons";
 
 // import zipcelx from "zipcelx";
 
@@ -134,15 +136,36 @@ const renderUser = (props, i, idx, isPending, readyToDelete, setReadyToDelete) =
 
 const AdminData = props => {
     const [readyToDelete, setReadyToDelete] = useState(null);
+    const [search, setSearch] = useState('');
     const m = props.model;
-    const activeUsers = _.sortBy(_.toPairs(props.users).filter(p => p[1].valid), p => p[1].displayName);
-    const pendingUsers = _.toPairs(props.users).filter(p => !p[1].valid);
-    const items = _.sortBy(_.toPairs(props.model.cars).map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]})), usr => _.get(usr, 'n', '').toLowerCase());
+    const toSearch = search && search.trim().length > 0 ? search.trim().toLowerCase() : null;
+    const searchUserFilter = itm => !toSearch || itm[1].displayName.toLowerCase().indexOf(toSearch) !== -1;
+    const searchFamilyFilter = itm => !toSearch || itm.n.toLowerCase().indexOf(toSearch) !== -1;
+    const activeUsers = _.sortBy(_.toPairs(props.users).filter(p => p[1].valid), p => p[1].displayName).filter(searchUserFilter);
+    const pendingUsers = _.toPairs(props.users).filter(p => !p[1].valid).filter(searchUserFilter);
+    const items = _.sortBy(
+        _.toPairs(props.model.cars)
+            .map(i => ({...m.families[i[1]], plate: i[0], familyId: i[1]}))
+            .filter(searchFamilyFilter)
+        , usr => _.get(usr, 'n', '').toLowerCase());
 
     return <div style={{marginLeft: '10px'}}>
         {/*<div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '8px', marginTop: '5px'}}>*/}
         {/*<Button icon onClick={this.onDownloadRequests}>cloud_download</Button>*/}
         {/*</div>*/}
+
+        <div style={{display: 'flex', justifyContent: 'center', marginTop: '10px'}}>
+            <TextField
+                id="adminsearch"
+                label="Búsqueda"
+                fullWidth
+                leftIcon={<FontIcon>search</FontIcon>}
+                onChange={v => setSearch(v)}
+                value={search}
+                lineDirection="center"
+                className="md-cell md-cell--bottom"
+            />
+        </div>
 
         <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', marginTop: '5px'}}>
 
