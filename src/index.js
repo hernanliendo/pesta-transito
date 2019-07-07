@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import * as serviceWorker from './serviceWorker';
+
 import WebFontLoader from 'webfontloader';
 // hot reload based on https://daveceddia.com/hot-reloading-create-react-app/
 // import {AppContainer} from 'react-hot-loader';
@@ -20,4 +21,4 @@ ReactDOM.render(<App/>, document.getElementById('root'));
 //     module.hot.accept();
 // }
 
-registerServiceWorker();
+serviceWorker.unregister();
