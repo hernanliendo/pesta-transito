@@ -143,6 +143,10 @@ class App extends React.Component {
         this.setState({...this.state, editingFamily: f, tabIndex: 1, addingNewCar: true});
     }
 
+    componentDidMount() {
+        Loadable.preloadAll();
+    }
+
     componentWillMount() {
         firebase.initializeApp(FIREBASE_CONFIG);
 

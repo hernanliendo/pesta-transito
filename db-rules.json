@@ -39,7 +39,8 @@
           ".write": "auth !== null && auth.uid === $user_id"
         }
       },
-      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()"
+      ".read": "auth !== null && root.child('users/' + auth.uid + '/valid').exists()",
+      ".write": "auth !== null && root.child('users/' + auth.uid + '/valid').exists() && root.child('admins/' + auth.uid).exists()"
     }
   }
 }
