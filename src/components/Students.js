@@ -6,7 +6,7 @@ import Button from 'react-md/lib/Buttons/Button';
 import FontIcon from 'react-md/lib/FontIcons/FontIcon';
 import SVGIcon from 'react-md/lib/SVGIcons/SVGIcon';
 import Logo from "../logo.png";
-// import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
+import SelectionControl from 'react-md/lib/SelectionControls/SelectionControl';
 
 const _ = require('lodash');
 const wait = require('wait-promise');
@@ -160,7 +160,6 @@ class Students extends React.Component {
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
-                { /*
                 <SelectionControl
                     id="jardinPrimaria"
                     onChange={v => this.props.onChangeView(v)}
@@ -169,7 +168,6 @@ class Students extends React.Component {
                     checked={jardin}
                     name="jardinPrimaria"
                 />
-                */}
 
                 {this.state.previousRequests.length === 0 &&
                 <div>

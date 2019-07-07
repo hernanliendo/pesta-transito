@@ -95,9 +95,10 @@ const renderItem = (props, i, idx) =>
     </div>;
 
 const deleteVolunteer = (props, id, readyToDelete, setReadyToDelete) => {
-    if (readyToDelete)
+    if (readyToDelete) {
         props.db.ref(`users/${id}`).remove();
-    else
+        setReadyToDelete(null);
+    } else
         setReadyToDelete(id);
 };
 
@@ -141,7 +142,7 @@ const AdminData = props => {
     const toSearch = search && search.trim().length > 0 ? search.trim().toLowerCase() : null;
     const searchUserFilter = itm => !toSearch || itm[1].displayName.toLowerCase().indexOf(toSearch) !== -1;
     const searchFamilyFilter = itm => !toSearch || itm.n.toLowerCase().indexOf(toSearch) !== -1;
-    const activeUsers = _.sortBy(_.toPairs(props.users).filter(p => p[1].valid), p => p[1].displayName).filter(searchUserFilter);
+    const activeUsers = _.sortBy(_.toPairs(props.users).filter(p => p[1].valid), p => _.get(p[1], 'displayName', '').toLowerCase()).filter(searchUserFilter);
     const pendingUsers = _.toPairs(props.users).filter(p => !p[1].valid).filter(searchUserFilter);
     const items = _.sortBy(
         _.toPairs(props.model.cars)
