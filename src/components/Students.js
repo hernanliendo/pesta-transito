@@ -60,8 +60,16 @@ class Students extends React.Component {
         return _.join(_.split(studentName, ' ').map(t => _.capitalize(t)), ' ') + ' (' + _.split(s[1], '_')[0].trim() + ')';// + ' (' + s[1].toUpperCase().trim() + ')';
     }
 
-    renderRequest(r, ridx, jardin) {
-        if ((r.jardin && !jardin) || (!r.jardin && jardin)) return <div key={ridx}/>;
+    renderRequest(r, ridx) {
+        const viewJardin = this.props.viewJardin;
+        const hasJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
+        const hasPrimaria = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
+
+        if (hasJardin && !hasPrimaria && !viewJardin)
+            return <div key={ridx}/>;
+
+        if (!hasJardin && hasPrimaria && viewJardin)
+            return <div key={ridx}/>;
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}));
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
@@ -154,8 +162,6 @@ class Students extends React.Component {
     }
 
     render() {
-        const jardin = this.props.viewJardin;
-
         return <div className="md-block-centered md-cell--12-phone md-cell--12-tablet md-cell--4-desktop" style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
 
             <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -164,8 +170,8 @@ class Students extends React.Component {
                     id="jardinPrimaria"
                     onChange={v => this.props.onChangeView(v)}
                     type="switch"
-                    label="Jardín"
-                    checked={jardin}
+                    label={this.props.viewJardin ? 'Jardín' : 'Primaria'}
+                    checked={this.props.viewJardin}
                     name="jardinPrimaria"
                 />
 
@@ -182,7 +188,7 @@ class Students extends React.Component {
                 </div>
                 }
 
-                {this.state.previousRequests.map((r, ridx) => this.renderRequest(r, ridx, jardin))}
+                {this.state.previousRequests.map((r, ridx) => this.renderRequest(r, ridx))}
 
                 <div style={{marginBottom: '30px'}}>&nbsp;</div>
             </div>

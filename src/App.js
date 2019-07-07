@@ -241,7 +241,6 @@ class App extends React.Component {
         let r = {
             plate: params.plate,
             family: params.family,
-            jardin: _.toPairs(params.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0,
             uid: this.state.user.uid
         };
 

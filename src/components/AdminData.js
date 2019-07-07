@@ -102,18 +102,18 @@ const deleteVolunteer = (props, id, readyToDelete, setReadyToDelete) => {
         setReadyToDelete(id);
 };
 
-const changeSchool = (props, id, user) => {
-    let r = 'Primaria';
-
-    if (!user.nivel || user.nivel === 'Primaria')
-        r = 'Jardín';
-    else if (user.nivel === 'Jardín')
-        r = 'Primaria y Jardín';
-    else if (user.nivel === 'Primaria y Jardín')
-        r = 'Primaria';
-
-    props.db.ref(`users/${id}/nivel`).set(r);
-};
+// const changeSchool = (props, id, user) => {
+//     let r = 'Primaria';
+//
+//     if (!user.nivel || user.nivel === 'Primaria')
+//         r = 'Jardín';
+//     else if (user.nivel === 'Jardín')
+//         r = 'Primaria y Jardín';
+//     else if (user.nivel === 'Primaria y Jardín')
+//         r = 'Primaria';
+//
+//     props.db.ref(`users/${id}/nivel`).set(r);
+// };
 
 const renderUser = (props, i, idx, isPending, readyToDelete, setReadyToDelete) =>
     <div key={idx} style={{display: 'flex', minHeight: '30px', justifyContent: 'space-between'}}>
@@ -125,9 +125,10 @@ const renderUser = (props, i, idx, isPending, readyToDelete, setReadyToDelete) =
             <Button icon onClick={() => props.db.ref(`users/${i[0]}/valid`).set(1)}>thumb_up</Button>
             }
 
-            {!isPending &&
+            {/*
+            !isPending &&
             <Button icon onClick={() => changeSchool(i[0], i[1])}>autorenew</Button>
-            }
+            */}
 
             <Button style={{color: i[0] === readyToDelete ? '#F44336' : 'rgba(0, 0, 0, 0.54)'}} icon
                     onClick={() => deleteVolunteer(props, i[0], readyToDelete, setReadyToDelete)}>delete</Button>
