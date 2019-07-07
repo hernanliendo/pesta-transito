@@ -75,6 +75,7 @@ const NoConnection = Loadable({
 
 const relations = ['Madre/Padre', 'Abuela/o', 'Empleada/o', 'Tia/o'];
 
+// npx source-map-explorer 'build/static/js/*.js'
 class App extends React.Component {
 
     constructor(props) {
@@ -326,8 +327,7 @@ class App extends React.Component {
                 }))
                 .catch(err => this.saveEvent({t: 'error', rk, status, error: err.stack}))
                 .then(saveE);
-        }
-        else
+        } else
             this.database
                 .ref('requests/' + rk + '/statuses')
                 .push()
