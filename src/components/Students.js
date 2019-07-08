@@ -71,7 +71,16 @@ class Students extends React.Component {
         if (!hasJardin && hasPrimaria && viewJardin)
             return <div key={ridx}/>;
 
-        const lastStatus = _.last(_.toPairs(r.statuses || {}));
+        const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
+        let wappState = '';
+
+        _.toPairs(r.statuses || {})
+            .filter(p => _.get(p[1], 'state', '') === 'wappStatus')
+            .map(p => _.get(p[1], 'status', ''))
+            .forEach(s => {
+                if (wappState !== 'read')
+                    wappState = s;
+            });
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
         let onCharge = (lastUser !== 'system' ? _.split(this.props.users[lastUser].displayName, ' ')[0] : '') + ' va llevando';
@@ -157,7 +166,7 @@ class Students extends React.Component {
                     <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
                 </div>
                 }
-
+                {wappState}
                 <span style={{display: 'flex', justifyContent: 'flex-end', marginTop: '5px'}}>
                     <FontIcon style={{color: '#55c5f5', marginRight: '-15px', zIndex: '2'}}>done</FontIcon>
                     <FontIcon style={{color: '#878787', zIndex: '0'}}>done</FontIcon>

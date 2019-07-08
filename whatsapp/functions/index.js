@@ -101,6 +101,7 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
                     body: {
                         chatPlatform: 'whatsapp',
                         chatChannelNumber: '5491126225607',
+                        clientPayload: req.body.requestId,
                         platformContactId: n,
                         ruleNameOrId: plural ? 'alumno_listo_plural' : 'alumno_listo_singular',
                         params: {driverName, students, dropLocation, requestId: req.body.requestId}
@@ -110,11 +111,6 @@ exports.notify_parent = functions.https.onRequest((req, res) => {
         }, error => {
             throw error;
         })
-        .then(apiResult => {
-            apiResult.forEach(aResult => db.ref('wapps/' + aResult.id).set(req.body.requestId));
-
-            return new Promise(r => r());
-        })
         .then(() => res.status(200).send('ok'));
 });
 
@@ -123,26 +119,14 @@ exports.wapp_status_notification = functions.https.onRequest((req, res) => {
 
     if (req.method === 'OPTIONS') return res.status(200).send('');
 
-    const txId = _.get(req, 'body.INTENT_TX_ID', '');
+    const requestId = _.get(req, 'body.CLIENT_PAYLOAD', '');
     const status = _.get(req, 'body.STATUS', '');
 
     if (status === 'read' || status === 'delivered') {
-        return db.ref('wapps/' + txId).once('value')
-            .then(snapshot => {
-
-                const requestsIds = _.uniq(_.toPairs(snapshot.val()).map(p => p[1]));
-
-                if (requestsIds && requestsIds.length > 0) {
-                    return db
-                        .ref('requests/' + requestsIds[0] + '/statuses')
-                        .push()
-                        .set({state: 'wappStatus', status, uid: 'system'})
-                } else
-                    return new Promise(e => e());
-
-            }, error => {
-                throw error;
-            })
+        return db
+            .ref('requests/' + requestId + '/statuses')
+            .push()
+            .set({state: 'wappStatus', status, uid: 'system'})
             .then(() => res.status(200).send(''))
             .catch(err => {
                 console.error(err, err.stack);
