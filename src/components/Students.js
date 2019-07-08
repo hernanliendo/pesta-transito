@@ -72,7 +72,7 @@ class Students extends React.Component {
             return <div key={ridx}/>;
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
-        let wappState = '';
+        let wappState = null;
 
         _.toPairs(r.statuses || {})
             .filter(p => _.get(p[1], 'state', '') === 'wappStatus')
@@ -166,11 +166,13 @@ class Students extends React.Component {
                     <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
                 </div>
                 }
-                {wappState}
+
+                {('pending' !== lastState && 'transit' !== lastState) &&
                 <span style={{display: 'flex', justifyContent: 'flex-end', marginTop: '5px'}}>
-                    <FontIcon style={{color: '#55c5f5', marginRight: '-15px', zIndex: '2'}}>done</FontIcon>
-                    <FontIcon style={{color: '#878787', zIndex: '0'}}>done</FontIcon>
+                    <FontIcon style={{color: wappState === 'read' ? '#55c5f5' : '#878787', marginRight: '-15px', zIndex: '2'}}>done</FontIcon>
+                    <FontIcon style={{color: !wappState ? 'rgb(255, 235, 59)' : (wappState === 'read' ? '#55c5f5' : '#878787'), zIndex: '0'}}>done</FontIcon>
                 </span>
+                }
             </div>
         </div>;
     }
