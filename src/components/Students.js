@@ -64,12 +64,24 @@ class Students extends React.Component {
         const viewJardin = this.props.viewJardin;
         const hasJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
         const hasPrimaria = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
+        const hasHermanos = hasJardin && hasPrimaria;
 
         if (viewJardin && !hasJardin)
             return <div key={ridx}/>;
 
         if (!viewJardin && !hasPrimaria)
             return <div key={ridx}/>;
+
+        if ( hasHermanos ) {
+            // _.toPairs(r.statuses || {})
+            //     .filter(p => _.get(p[1], 'state', '') === 'wappStatus')
+            //     .map(p => _.get(p[1], 'status', ''))
+            //     .forEach(s => {
+            //         if (wappState !== 'read')
+            //             wappState = s;
+            //     });
+
+        }
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
         let wappState = null;
@@ -81,6 +93,9 @@ class Students extends React.Component {
                 if (wappState !== 'read')
                     wappState = s;
             });
+
+
+
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
         let onCharge = (lastUser !== 'system' ? _.split(this.props.users[lastUser].displayName, ' ')[0] : '') + ' va llevando';
@@ -132,7 +147,7 @@ class Students extends React.Component {
                     return ('' + p1[0]).localeCompare(p2[0]);
 
                 }).map(p =>
-                    <div key={p[0]} className="text-height md-text ptext-wrap">{this.studentString(r, p)}</div>)}
+                    <div key={p[0]} className={(hasPrimaria && hasJardin && p[1].startsWith('Sala') ? 'md-font-bold' : '') + ' text-height md-text ptext-wrap'}>{this.studentString(r, p)}</div>)}
 
                 {r.notes && <div style={{color: '#D32F2F'}} className="text-height md-text md-font-bold ptext-wrap">{r.notes}</div>}
 

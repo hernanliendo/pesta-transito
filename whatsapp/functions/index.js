@@ -122,7 +122,10 @@ exports.wapp_status_notification = functions.https.onRequest((req, res) => {
     const requestId = _.get(req, 'body.CLIENT_PAYLOAD', '');
     const status = _.get(req, 'body.STATUS', '');
 
-    if (status === 'read' || status === 'delivered') {
+    // console.log('requestId [' + requestId + ']');
+    // console.log('XX [' + _.get(req, 'body', '') + ']');
+
+    if ((requestId && requestId !== '') && (status === 'read' || status === 'delivered')) {
         return db
             .ref('requests/' + requestId + '/statuses')
             .push()
