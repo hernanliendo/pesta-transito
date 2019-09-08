@@ -5,7 +5,7 @@ const rp = require('request-promise');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const {BigQuery} = require('@google-cloud/bigquery');
-const bigquery = new BigQuery({projectId: 'pesta-transito'});
+const bigquery = new BigQuery();
 
 admin.initializeApp();
 
