@@ -65,10 +65,10 @@ class Students extends React.Component {
         const hasJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
         const hasPrimaria = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
 
-        if (hasJardin && !hasPrimaria && !viewJardin)
+        if (viewJardin && !hasJardin)
             return <div key={ridx}/>;
 
-        if (!hasJardin && hasPrimaria && viewJardin)
+        if (!viewJardin && !hasPrimaria)
             return <div key={ridx}/>;
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
@@ -122,7 +122,16 @@ class Students extends React.Component {
 
                 <div style={{fontSize: plateFontSize}} className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
 
-                {_.toPairs(r.family.ks).filter((p, pidx) => !r.unrequested || !r.unrequested[pidx]).map(p =>
+                {_.toPairs(r.family.ks).filter((p, pidx) => !r.unrequested || !r.unrequested[pidx]).sort((p1, p2) => {
+                    if (p1[1].startsWith('Sala') && !p2[1].startsWith('Sala'))
+                        return -1;
+
+                    if (!p1[1].startsWith('Sala') && p2[1].startsWith('Sala'))
+                        return 1;
+
+                    return ('' + p1[0]).localeCompare(p2[0]);
+
+                }).map(p =>
                     <div key={p[0]} className="text-height md-text ptext-wrap">{this.studentString(r, p)}</div>)}
 
                 {r.notes && <div style={{color: '#D32F2F'}} className="text-height md-text md-font-bold ptext-wrap">{r.notes}</div>}
@@ -140,7 +149,7 @@ class Students extends React.Component {
 
                 {(!this.props.isTeacher && isPendingRequest) &&
                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                    {!r.jardin &&
+                    {!hasJardin &&
                     <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>
                     }
 
