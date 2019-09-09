@@ -210,11 +210,20 @@ class App extends React.Component {
 
     onDelivered(rk) {
         const request = this.state.requests.filter(r => r.k === rk)[0];
+        const hasJardin = _.toPairs(request.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
+        const hasPrimaria = _.toPairs(request.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
+        const hasHermanos = hasJardin && hasPrimaria;
 
-        this.database
-            .ref('requests/' + rk)
-            .set(null, () => this.showMessage('Se entregaron chicos a ' + request.plate))
-            .then(() => this.saveEvent({t: 'delivered', request}));
+        console.log('hasHermanos', hasHermanos);
+
+        if (hasHermanos) {
+            this.changeStatus(request, 'jardinDelivered');
+        } else {
+            this.database
+                .ref('requests/' + rk)
+                .set(null, () => this.showMessage('Se entregaron chicos a ' + request.plate))
+                .then(() => this.saveEvent({t: 'delivered', request}));
+        }
     }
 
     onRemoved(rk) {

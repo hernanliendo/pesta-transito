@@ -64,7 +64,7 @@ class Students extends React.Component {
         const viewJardin = this.props.viewJardin;
         const hasJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
         const hasPrimaria = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
-        const hasHermanos = hasJardin && hasPrimaria;
+        // const hasHermanos = hasJardin && hasPrimaria;
 
         if (viewJardin && !hasJardin)
             return <div key={ridx}/>;
@@ -72,16 +72,10 @@ class Students extends React.Component {
         if (!viewJardin && !hasPrimaria)
             return <div key={ridx}/>;
 
-        if ( hasHermanos ) {
-            // _.toPairs(r.statuses || {})
-            //     .filter(p => _.get(p[1], 'state', '') === 'wappStatus')
-            //     .map(p => _.get(p[1], 'status', ''))
-            //     .forEach(s => {
-            //         if (wappState !== 'read')
-            //             wappState = s;
-            //     });
-
-        }
+        // hacer un pedido normal de jardin y ver los evetos para ver como se que pasa esgto diferente
+        // luego cambiar los renders y botones
+        // si vienen los dos, no mostrar en primaria hasta que haga jardin
+        //jardinDelivered
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
         let wappState = null;
@@ -93,7 +87,6 @@ class Students extends React.Component {
                 if (wappState !== 'read')
                     wappState = s;
             });
-
 
 
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
@@ -138,16 +131,20 @@ class Students extends React.Component {
                 <div style={{fontSize: plateFontSize}} className="text-height md-text ptext-wrap md-font-semibold">{r.plate}</div>
 
                 {_.toPairs(r.family.ks).filter((p, pidx) => !r.unrequested || !r.unrequested[pidx]).sort((p1, p2) => {
-                    if (p1[1].startsWith('Sala') && !p2[1].startsWith('Sala'))
-                        return -1;
-
-                    if (!p1[1].startsWith('Sala') && p2[1].startsWith('Sala'))
-                        return 1;
+                    // if (p1[1].startsWith('Sala') && !p2[1].startsWith('Sala'))
+                    //     return -1;
+                    //
+                    // if (!p1[1].startsWith('Sala') && p2[1].startsWith('Sala'))
+                    //     return 1;
 
                     return ('' + p1[0]).localeCompare(p2[0]);
-
-                }).map(p =>
-                    <div key={p[0]} className={(hasPrimaria && hasJardin && p[1].startsWith('Sala') ? 'md-font-bold' : '') + ' text-height md-text ptext-wrap'}>{this.studentString(r, p)}</div>)}
+                })
+                    .filter(p => {
+                        const studentJardin = p[1].startsWith('Sala');
+                        return (studentJardin && viewJardin) || (!studentJardin && !viewJardin);
+                    })
+                    .map(p => <div key={p[0]} className="text-height md-text ptext-wrap">{this.studentString(r, p)}</div>)}
+                {/*<div key={p[0]} className={(hasPrimaria && hasJardin && p[1].startsWith('Sala') ? 'md-font-bold' : '') + ' text-height md-text ptext-wrap'}>{this.studentString(r, p, hasPrimaria, hasJardin)}</div>)}*/}
 
                 {r.notes && <div style={{color: '#D32F2F'}} className="text-height md-text md-font-bold ptext-wrap">{r.notes}</div>}
 
