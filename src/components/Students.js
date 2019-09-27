@@ -107,7 +107,7 @@ class Students extends React.Component {
         let color;
         let plateFontSize = '14px';
 
-        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid && 'pending' !== lastState) {
+        if (lastStatus && lastStatus[1].uid === this.props.currentUser.uid && 'pending' !== lastState && (!hasHermanos || viewJardin)) {
             color = '#FFEB3B';
             // plateFontSize = '24px';
         } else if ('pending' !== lastState)
