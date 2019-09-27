@@ -227,17 +227,18 @@ class App extends React.Component {
                     break;
             }
 
-            // akstar estado para que luzca bien en promaria
             Promise.all(
                 _.toPairs(request.family.ks)
                     .filter(p => p[1].startsWith('Sala'))
                     .map(p => new Promise(resolve => this.database.ref(`requests/${rk}/family/ks/${p[0]}`).set(null, () => resolve())))
             )
-                .then(v => this.database
-                    .ref(`requests/${rk}/ord`)
-                    .set(pos + 1, () => this.showMessage('Se entregaron chicos a ' + request.plate))
-                    .then(() => this.database.ref(`requests/${rk}/jardinDone`).set('1'))
-                    .then(() => this.saveEvent({t: 'delivered', request: {...request, fromJardin: true}})));
+                .then(() => new Promise(resolve =>
+                    this.database.ref(`requests/${rk}/ord`).set(pos + 1, () => this.database.ref(`requests/${rk}/jardinDone`).set(1, () =>
+                        this.database
+                            .ref(`requests/${rk}/statuses`)
+                            .push()
+                            .set({state: 'pending', uid: this.state.user.uid}, () => resolve())))))
+                .then(() => this.saveEvent({t: 'delivered', request: {...request, fromJardin: true}}));
         } else
             this.database
                 .ref('requests/' + rk)

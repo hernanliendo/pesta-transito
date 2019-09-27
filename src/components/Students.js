@@ -64,18 +64,13 @@ class Students extends React.Component {
         const viewJardin = this.props.viewJardin;
         const hasJardin = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') !== -1).length > 0;
         const hasPrimaria = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
-        // const hasHermanos = hasJardin && hasPrimaria;
+        const hasHermanos = hasJardin && hasPrimaria;
 
         if (viewJardin && !hasJardin)
             return <div key={ridx}/>;
 
         if (!viewJardin && !hasPrimaria)
             return <div key={ridx}/>;
-
-        // hacer un pedido normal de jardin y ver los evetos para ver como se que pasa esgto diferente
-        // luego cambiar los renders y botones
-        // si vienen los dos, no mostrar en primaria hasta que haga jardin
-        // camila no mostarr en primaria
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
         let wappState = null;
@@ -88,12 +83,17 @@ class Students extends React.Component {
                     wappState = s;
             });
 
-
         const lastState = !lastStatus ? 'pending' : lastStatus[1].state;
         const lastUser = !lastStatus ? r.uid : lastStatus[1].uid;
         let onCharge = (lastUser !== 'system' ? _.split(this.props.users[lastUser].displayName, ' ')[0] : '') + ' va llevando';
 
-        if ('pending' === lastState)
+        if (r.jardinDone)
+            onCharge = 'Viene por Pampa desde el Jardín';
+
+        else if (hasHermanos && !viewJardin)
+            onCharge = 'Esperando aviso de Jardín';
+
+        else if ('pending' === lastState)
             onCharge = 'Esperando';
 
         else if ('parentReplied' === lastState)
@@ -167,42 +167,11 @@ class Students extends React.Component {
 
             <div style={{display: 'flex', flexDirection: 'column', minWidth: '120px'}}>
 
-                {(this.props.isTeacher && isPendingRequest) &&
                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'teacherDelivered')}>ENTREGADO</Button>
+                    {this.renderItemButtons(hasJardin, hasHermanos, viewJardin, lastState, r)}
                 </div>
-                }
 
-                {(!this.props.isTeacher && isPendingRequest) &&
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                    {!hasJardin &&
-                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>
-                    }
-
-                    {_.has(r, 'family.wsapp0') &&
-                    <Button style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r, 'requestWhatsApp')}>A DARSENA</Button>
-                    }
-
-                    {r.jardin &&
-                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onRemoved(r.k)}>ELIMINAR</Button>
-                    }
-                </div>
-                }
-
-                {('transit' === lastState || 'parentReplied' === lastState) &&
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                    <Button style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>
-                    <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
-                </div>
-                }
-
-                {'requestWhatsApp' === lastState &&
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                    <Button raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
-                </div>
-                }
-
-                {('pending' !== lastState && 'transit' !== lastState) &&
+                {('pending' !== lastState && 'transit' !== lastState && (!hasHermanos || viewJardin)) &&
                 <span style={{display: 'flex', justifyContent: 'flex-end', marginTop: '5px'}}>
                     <FontIcon style={{color: wappState === 'read' ? '#55c5f5' : '#878787', marginRight: '-15px', zIndex: '2'}}>done</FontIcon>
                     <FontIcon style={{color: !wappState ? 'rgb(255, 235, 59)' : (wappState === 'read' ? '#55c5f5' : '#878787'), zIndex: '0'}}>done</FontIcon>
@@ -210,6 +179,38 @@ class Students extends React.Component {
                 }
             </div>
         </div>;
+    }
+
+    renderItemButtons(hasJardin, hasHermanos, viewJardin, lastState, r) {
+        if (hasHermanos && !viewJardin)
+            return [];
+
+        if ('pending' === lastState) {
+            if (this.props.isTeacher)
+                return [<Button key="opt1" style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'teacherDelivered')}>ENTREGADO</Button>];
+
+            let res = [];
+
+            if (!hasJardin)
+                res.push(<Button key="opt2" style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onChangeStatus(r, 'transit')}>AHí VAMOS</Button>);
+
+            if (_.has(r, 'family.wsapp0') && (!hasHermanos || viewJardin))
+                res.push(<Button key="opt3" style={{marginBottom: '5px'}} iconEl={<WhatsAppIcon/>} raised primary onClick={() => this.props.onChangeStatus(r, 'requestWhatsApp')}>A DARSENA</Button>);
+
+            if (r.jardin)
+                res.push(<Button key="opt4" style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onRemoved(r.k)}>ELIMINAR</Button>);
+
+            return res;
+        }
+
+        if (('transit' === lastState || 'parentReplied' === lastState))
+            return [<Button key="opt5" style={{marginBottom: '5px'}} raised primary onClick={() => this.props.onDelivered(r.k)}>ENTREGADO</Button>,
+                <Button key="opt6" raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>
+            ];
+
+        if ('requestWhatsApp' === lastState)
+            return [<Button key="opt7" raised onClick={() => this.props.onChangeStatus(r, 'pending')}>CANCELO</Button>];
+
     }
 
     render() {
