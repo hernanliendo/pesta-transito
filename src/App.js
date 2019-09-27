@@ -214,16 +214,35 @@ class App extends React.Component {
         const hasPrimaria = _.toPairs(request.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
         const hasHermanos = hasJardin && hasPrimaria;
 
-        console.log('hasHermanos', hasHermanos);
-
         if (hasHermanos) {
-            this.changeStatus(request, 'jardinDelivered');
-        } else {
+            // solving 11th position and removing jardin kids
+            let pos = 100;
+            const currentRequests = this.state.requests;
+
+            for (let i = 0; i < currentRequests.length; i++) {
+                // console.log('currentRequests[i].ord', currentRequests[i].ord);
+                pos = currentRequests[i].ord;
+
+                if (i === 10)
+                    break;
+            }
+
+            // akstar estado para que luzca bien en promaria
+            Promise.all(
+                _.toPairs(request.family.ks)
+                    .filter(p => p[1].startsWith('Sala'))
+                    .map(p => new Promise(resolve => this.database.ref(`requests/${rk}/family/ks/${p[0]}`).set(null, () => resolve())))
+            )
+                .then(v => this.database
+                    .ref(`requests/${rk}/ord`)
+                    .set(pos + 1, () => this.showMessage('Se entregaron chicos a ' + request.plate))
+                    .then(() => this.database.ref(`requests/${rk}/jardinDone`).set('1'))
+                    .then(() => this.saveEvent({t: 'delivered', request: {...request, fromJardin: true}})));
+        } else
             this.database
                 .ref('requests/' + rk)
                 .set(null, () => this.showMessage('Se entregaron chicos a ' + request.plate))
                 .then(() => this.saveEvent({t: 'delivered', request}));
-        }
     }
 
     onRemoved(rk) {
@@ -272,7 +291,7 @@ class App extends React.Component {
 
                     (this.state.requests || []).filter(rr => rr['ord']).forEach(rr => order = rr['ord']);
 
-                    order++;
+                    order += 100;
 
                     return this.database.ref('requests/' + newRequestRef.key + '/ord').set(order);
                 })
@@ -376,7 +395,7 @@ class App extends React.Component {
 
             {(!this.state.addingNotes && this.state.tabIndex === 0) &&
             <Students
-                requests={this.state.requests}
+                requests={this.state.requests.sort((r1, r2) => r1.ord - r2.ord)}
                 users={this.state.users}
                 viewJardin={this.state.viewJardin}
                 onChangeView={viewJardin => this.setState({...this.state, viewJardin})}

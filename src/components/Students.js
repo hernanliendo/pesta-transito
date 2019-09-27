@@ -75,7 +75,7 @@ class Students extends React.Component {
         // hacer un pedido normal de jardin y ver los evetos para ver como se que pasa esgto diferente
         // luego cambiar los renders y botones
         // si vienen los dos, no mostrar en primaria hasta que haga jardin
-        //jardinDelivered
+        // camila no mostarr en primaria
 
         const lastStatus = _.last(_.toPairs(r.statuses || {}).filter(p => _.get(p[1], 'state', '') !== 'wappStatus'));
         let wappState = null;
@@ -117,13 +117,27 @@ class Students extends React.Component {
 
         if (this.props.isTeacher && (!isPendingRequest || teacherHidden)) return <div key={ridx}/>;
 
+        let addOrder = 0;
+        let rOrder = r.ord;
+
+        for (const itm of this.state.previousRequests) {
+            if (itm === r) {
+                rOrder += addOrder;
+                rOrder = Math.trunc(rOrder / 100);
+                break;
+            }
+
+            if (itm.ord % 100 !== 0)
+                addOrder++;
+        }
+
         return <div key={ridx} style={{
             display: 'flex', minHeight: '140px', alignItems: 'center', backgroundColor: color, justifyContent: 'space-around',
             animation: ridx === animationOnItem ? 'removing-item 1s' : null
         }}>
 
             <div style={{display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
-                <Avatar style={{height: '40px', width: '40px'}} contentStyle={{fontSize: '22px'}} suffix={Avatar.defaultProps.suffixes[r.ord]} random>{r.ord}</Avatar>
+                <Avatar style={{height: '40px', width: '40px'}} contentStyle={{fontSize: '22px'}} suffix={Avatar.defaultProps.suffixes[rOrder]} random>{rOrder}</Avatar>
             </div>
 
             <div style={{display: 'flex', flexDirection: 'column', width: 'calc(100% - 232px)'}}>
