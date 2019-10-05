@@ -1,0 +1,11 @@
+{
+  "name": "noshow",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "fast-csv": "^3.4.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {}
+}
