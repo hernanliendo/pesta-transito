@@ -66,6 +66,18 @@ class Students extends React.Component {
         const hasPrimaria = _.toPairs(r.family.ks).filter(p => p[1].indexOf('Sala') === -1).length > 0;
         const hasHermanos = hasJardin && hasPrimaria;
 
+        const unrequested = _.toPairs(r.family.ks).filter((p, pidx) => !r.unrequested || !r.unrequested[pidx]);
+        if (unrequested && unrequested.length > 0) {
+            const list = unrequested.filter(ii => ii).filter(ii => {
+                const unrequestedInJardin = ii[1].indexOf('Sala') !== -1;
+
+                return (!unrequestedInJardin && !viewJardin) || (unrequestedInJardin && viewJardin);
+            });
+
+            if (list.length === 0)
+                return <div key={ridx}/>;
+        }
+
         if (viewJardin && !hasJardin)
             return <div key={ridx}/>;
 
@@ -155,6 +167,7 @@ class Students extends React.Component {
                 })
                     .filter(p => {
                         const studentJardin = p[1].startsWith('Sala');
+
                         return (studentJardin && viewJardin) || (!studentJardin && !viewJardin);
                     })
                     .map(p => <div key={p[0]} className="text-height md-text ptext-wrap">{this.studentString(r, p)}</div>)}
