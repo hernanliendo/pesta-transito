@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "fast-csv": "^2.4.1",
+    "fast-csv": "^4.3.6",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "request": "^2.87.0",
